@@ -5,6 +5,7 @@ import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,18 @@ public class NanopubController {
 		// TODO create cool implementation
 		
 		return URI.create(seed);
+	}
+
+	@RequestMapping(value = "/nanopubs", method = RequestMethod.POST)
+	@ApiOperation("Stores a nanopub")
+	public @ResponseBody Object storeNanopubPost (
+			@ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
+			@RequestBody(required = true) String nanopub) {
+		
+		// TODO create cool implementation
+		System.out.println(nanopub);
+		
+		return "Thanks for " + nanopub;
 	}
 	
 	@RequestMapping(value = "/store", method = RequestMethod.PUT)
