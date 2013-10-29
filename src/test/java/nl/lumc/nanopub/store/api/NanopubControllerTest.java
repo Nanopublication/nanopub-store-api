@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.Assert;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -38,7 +37,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 @ContextConfiguration("classpath:test-api-context.xml")
 public class NanopubControllerTest {
     
-    @Autowired
+    @Inject
     private WebApplicationContext wac;
     
     @Inject
@@ -68,9 +67,9 @@ public class NanopubControllerTest {
         
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Thanks!");
-                
-        ResponseWrapper result = controller.storeNanopub ("bla bla");       
-       // assertEquals(expected,  controller.storeNanopub ("bla bla"));
+        
+        ResponseWrapper result = controller.storeNanopub ("application/xtrig", "bla bla");       
+        //assertEquals(expected,  controller.storeNanopub ("bla bla"));
         
     }
 
