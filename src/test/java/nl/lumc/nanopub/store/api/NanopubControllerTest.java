@@ -11,6 +11,7 @@ import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.Assert;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 
@@ -52,7 +54,13 @@ public class NanopubControllerTest {
     @Test
     public void storeNanopubURLMappingTest() throws Exception {
         mockMvc.perform(get("/nanopub/store/np").param("np", "bla bla"))
-                .andDo(print());
+                .andExpect(status().isOk());
+    }
+    
+    @Test
+    public void storeNanopubURLMappingParamsMissing() throws Exception {
+        mockMvc.perform(get("/nanopub/store"))
+                .andExpect(status().isMethodNotAllowed());
     }
   
     @Test
@@ -60,9 +68,9 @@ public class NanopubControllerTest {
         
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Thanks!");
-        
+                
         ResponseWrapper result = controller.storeNanopub ("bla bla");       
-        //assertEquals(expected,  controller.storeNanopub ("bla bla"));
+       // assertEquals(expected,  controller.storeNanopub ("bla bla"));
         
     }
 

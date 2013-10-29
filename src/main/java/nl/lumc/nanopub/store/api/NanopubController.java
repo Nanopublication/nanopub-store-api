@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 
 @Controller
 @RequestMapping("/nanopub")
@@ -45,17 +46,17 @@ public class NanopubController {
 		return "Thanks for " + nanopub + " of type " + contentType;
 	}
 	
-//	@RequestMapping(value = "/store", method = RequestMethod.PUT)
-//	@ApiOperation("stores a nanopub")
-//	public @ResponseBody ResponseWrapper storeNanopub(
-//			@ApiParam(required = true, value = "The nanopub document")
-//			@RequestParam final String nanopub) {
-//		
-//		// TODO create cool implementation
-//		ResponseWrapper result = new ResponseWrapper();
-//        result.setValue("Thanks!");
-//		return result;
-//	}
+	@RequestMapping(value = "/store", method = RequestMethod.PUT)
+	@ApiOperation("stores a nanopub")
+	public @ResponseBody ResponseWrapper storeNanopub(
+			@ApiParam(required = true, value = "The nanopub document")
+			@RequestParam final String nanopub) {
+		
+		// TODO create cool implementation
+		ResponseWrapper result = new ResponseWrapper();
+        result.setValue("Thanks!");
+		return result;
+	}
 	
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	@ApiOperation("retrieves a single nanopub")
