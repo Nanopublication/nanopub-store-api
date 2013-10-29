@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 
 @Controller
 @RequestMapping("/nanopub")
@@ -33,7 +34,7 @@ public class NanopubController {
 
 	@RequestMapping(value = "/nanopubs", method = RequestMethod.POST)
 	@ApiOperation("Stores a nanopub")
-	public @ResponseBody Object storeNanopubPost (
+	public @ResponseBody ResponseWrapper storeNanopub (
 			@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
 			// Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
 			@ApiParam(required = true, value = "3The RDF content of the nanopublication to be published")
@@ -42,21 +43,11 @@ public class NanopubController {
 		// TODO create cool implementation
 		System.out.println(nanopub);
 		
-		return "Thanks for " + nanopub + " of type " + contentType;
+		ResponseWrapper response = new ResponseWrapper();
+        response.setValue("Thanks for " + nanopub + " of type " + contentType);
+        return response;
 	}
-	
-//	@RequestMapping(value = "/store", method = RequestMethod.PUT)
-//	@ApiOperation("stores a nanopub")
-//	public @ResponseBody ResponseWrapper storeNanopub(
-//			@ApiParam(required = true, value = "The nanopub document")
-//			@RequestParam final String nanopub) {
-//		
-//		// TODO create cool implementation
-//		ResponseWrapper result = new ResponseWrapper();
-//        result.setValue("Thanks!");
-//		return result;
-//	}
-	
+		
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	@ApiOperation("retrieves a single nanopub")
 	public @ResponseBody Object getNanopublication(
