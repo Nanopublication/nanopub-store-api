@@ -46,6 +46,7 @@ public class NanopubController {
 		ResponseWrapper response = new ResponseWrapper();
         response.setValue("Thanks for " + nanopub + " of type " + contentType);
         return response;
+
 	}
 
 	@RequestMapping(value = "/store", method = RequestMethod.PUT)
@@ -60,6 +61,10 @@ public class NanopubController {
 		return result;
 	}
 	
+
+
+	}
+		
 
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	@ApiOperation("retrieves a single nanopub")
