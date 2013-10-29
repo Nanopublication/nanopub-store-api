@@ -65,5 +65,8 @@ public class NanopubController {
 		// TODO create cool implementation
 		
 		return "This is a nanopub with the id " + id;
-	}
+	}  
+      
+        
+    
 }
