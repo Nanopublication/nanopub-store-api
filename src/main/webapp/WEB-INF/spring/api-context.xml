@@ -23,7 +23,7 @@
 			2. Registers the Spring default json converter. The json converter is configured to omit
 				all null members from classes.
 		-->
-		<mvc:message-converters register-defaults="false">
+ 		<mvc:message-converters register-defaults="true">
 			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="objectMapper">
 	                <bean class="com.fasterxml.jackson.databind.ObjectMapper">

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 
 @Controller
 @RequestMapping("/nanopub")
@@ -34,26 +34,28 @@ public class NanopubController {
 	@RequestMapping(value = "/nanopubs", method = RequestMethod.POST)
 	@ApiOperation("Stores a nanopub")
 	public @ResponseBody Object storeNanopubPost (
-			@ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
+			@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
+			// Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
+			@ApiParam(required = true, value = "3The RDF content of the nanopublication to be published")
 			@RequestBody(required = true) String nanopub) {
 		
 		// TODO create cool implementation
 		System.out.println(nanopub);
 		
-		return "Thanks for " + nanopub;
+		return "Thanks for " + nanopub + " of type " + contentType;
 	}
 	
-	@RequestMapping(value = "/store", method = RequestMethod.PUT)
-	@ApiOperation("stores a nanopub")
-	public @ResponseBody ResponseWrapper storeNanopub(
-			@ApiParam(required = true, value = "The nanopub document")
-			@RequestParam final String nanopub) {
-		
-		// TODO create cool implementation
-		ResponseWrapper result = new ResponseWrapper();
-        result.setValue("Thanks!");
-		return result;
-	}
+//	@RequestMapping(value = "/store", method = RequestMethod.PUT)
+//	@ApiOperation("stores a nanopub")
+//	public @ResponseBody ResponseWrapper storeNanopub(
+//			@ApiParam(required = true, value = "The nanopub document")
+//			@RequestParam final String nanopub) {
+//		
+//		// TODO create cool implementation
+//		ResponseWrapper result = new ResponseWrapper();
+//        result.setValue("Thanks!");
+//		return result;
+//	}
 	
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	@ApiOperation("retrieves a single nanopub")
