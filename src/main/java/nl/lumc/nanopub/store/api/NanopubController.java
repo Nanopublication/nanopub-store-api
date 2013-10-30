@@ -1,10 +1,13 @@
 package nl.lumc.nanopub.store.api;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
+import org.openrdf.OpenRDFException;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,32 +19,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ch.tkuhn.nanopub.MalformedNanopubException;
+import ch.tkuhn.nanopub.Nanopub;
+import ch.tkuhn.nanopub.NanopubImpl;
+
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
+import nl.lumc.nanopub.store.dao.NanopubDao;
 
 @Controller
 @RequestMapping("/nanopubs")
 public class NanopubController {
 	private static final Logger logger = LoggerFactory.getLogger(NanopubController.class);
-	
-	/**
-	 * 
-	 * @param seed
-	 * @return
-	 */
-	@RequestMapping(value = "/mint-uri", method = RequestMethod.POST)
-	@ApiOperation("mints a new uri")
-	public @ResponseBody URI mintUri(
-			@ApiParam(required = true, value = "seed for the uri")
-			@RequestParam final String seed) {
-		
-		// TODO create cool implementation
-		
-		return URI.create(seed);
-	}
-	
 
+	
+	private NanopubDao nanopubDao;
+	
+	
 	/**
 	 * 
 	 * @param contentType
@@ -56,8 +51,21 @@ public class NanopubController {
 			@ApiParam(required = true, value = "3The RDF content of the nanopublication to be published")
 			@RequestBody(required = true) String nanopub) {
 		
-		// TODO create cool implementation
-		System.out.println(nanopub);
+		Nanopub np;
+		try {
+			np = new NanopubImpl(nanopub, RDFFormat.TRIG);
+			this.nanopubDao.storeNanopub(np);
+			System.out.println(nanopub);		
+		} catch (MalformedNanopubException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OpenRDFException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		ResponseWrapper response = new ResponseWrapper();
         response.setValue("Thanks for " + nanopub + " of type " + contentType);
