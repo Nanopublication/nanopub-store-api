@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 /**
  *
- * @author reinout, Rajaram, Eelke, Mark
+ * @author Reinout, Rajaram, Eelke, Mark
  * @since 25-10-2013
  * @version 0.2
  */
@@ -53,7 +53,8 @@ public class NanopubControllerTest {
 
     @Before
     public void setup() {
-      mockMvc = webAppContextSetup(this.wac).build();
+      //mockMvc = webAppContextSetup(this.wac).build();
+        mockMvc = standaloneSetup(controller).build();
     }
     
 
@@ -66,16 +67,19 @@ public class NanopubControllerTest {
     @Test
     public void testStoreNanopubURLMappingInvalid() throws Exception {
         mockMvc.perform(get("/nanopub_invalid_url"))
-                .andExpect(status().isMethodNotAllowed());
+                .andExpect(status().isNotFound());
     }
     
   
     @Test
     public void testStoreNanopubResponse() {
-        ResponseWrapper expected = new ResponseWrapper();
-        expected.setValue("Thanks!");
         
-        ResponseWrapper actual = controller.storeNanopub("application/xtrig", "bla bla");       
+        String nanopub = "bla bla";
+        String contentType = "application/xtrig";
+        ResponseWrapper expected = new ResponseWrapper();        
+        
+        expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
+        ResponseWrapper actual = controller.storeNanopub(contentType, nanopub);       
         Assert.assertEquals(expected.getValue(), actual.getValue());
     }
   
@@ -87,12 +91,12 @@ public class NanopubControllerTest {
   
 
     @Test
-	public void testRetrieveNanopubsList() throws Exception {
+    public void testRetrieveNanopubsList() throws Exception {
 //        ResponseWrapper expected = new ResponseWrapper();
-//        expected.setValue("Thanks!");
+//        expected.setValue("Thanks!");        
         
         List<URI> result = controller.listNanopubs();
-        assertNotNull(result);
-	}
+        assertNotNull(result);	
+    }
     
 }
