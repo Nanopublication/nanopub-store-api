@@ -86,7 +86,7 @@ public class NanopubControllerTest {
     
     @Test
     public void testRetrieveNanopubsListURLMapping() throws Exception {
-        mockMvc.perform(get("/nanopubs")).andDo(print()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla          
+        mockMvc.perform(get("/nanopubs")).andDo(print());     
     }
   
 
