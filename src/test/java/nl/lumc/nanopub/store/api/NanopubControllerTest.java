@@ -67,8 +67,7 @@ public class NanopubControllerTest {
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Thanks!");
         
-        ResponseWrapper actual = controller.storeNanopub("bla bla");       
-        
+        ResponseWrapper actual = controller.storeNanopub("bla bla");
         Assert.assertEquals(expected.getValue(), actual.getValue());       
         
     }
