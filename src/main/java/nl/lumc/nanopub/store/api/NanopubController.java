@@ -1,10 +1,14 @@
 package nl.lumc.nanopub.store.api;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +21,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 
 @Controller
-@RequestMapping("/nanopub")
+@RequestMapping("/nanopubs")
 public class NanopubController {
 	private static final Logger logger = LoggerFactory.getLogger(NanopubController.class);
 	
@@ -32,7 +36,7 @@ public class NanopubController {
 		return URI.create(seed);
 	}
 
-	@RequestMapping(value = "/nanopubs", method = RequestMethod.POST)
+	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ApiOperation("Stores a nanopub")
 	public @ResponseBody ResponseWrapper storeNanopub (
 			@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
@@ -45,27 +49,38 @@ public class NanopubController {
 		
 		ResponseWrapper response = new ResponseWrapper();
         response.setValue("Thanks for " + nanopub + " of type " + contentType);
+        
         return response;
-
 	}
-
-	@RequestMapping(value = "/store", method = RequestMethod.PUT)
-	@ApiOperation("stores a nanopub")
-	public @ResponseBody ResponseWrapper storeNanopub(
-			@ApiParam(required = true, value = "The nanopub document")
-			@RequestParam final String nanopub) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@ApiOperation("Retrieves a list of all nanopub URIs in the store.")
+	public @ResponseBody List<URI> listNanopubs() {
 		
 		// TODO create cool implementation
-		ResponseWrapper result = new ResponseWrapper();
-        result.setValue("Thanks!");
-		return result;
-	}	
+		
+		List<URI> response = Collections.EMPTY_LIST;
+		
+		try {
+			response = Collections.singletonList(new URI("http://mydomain.com/nanopubs/1"));
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return response;
+	}
+		
 
-	@RequestMapping(value = "/get", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ApiOperation("retrieves a single nanopub")
 	public @ResponseBody Object getNanopublication(
 			@ApiParam(required = true, value = "The identifier of the required nanopublication")
-			@RequestParam final String id) {
+			@PathVariable final String id) {
 		logger.debug("retrieving nanopublication with id '{}'", id);
 		
 		// TODO create cool implementation
