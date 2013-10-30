@@ -19,7 +19,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
@@ -68,8 +67,9 @@ public class NanopubControllerTest {
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Thanks!");
         
-        ResponseWrapper result = controller.storeNanopub ("application/xtrig", "bla bla");       
-        //assertEquals(expected,  controller.storeNanopub ("bla bla"));
+        ResponseWrapper actual = controller.storeNanopub("bla bla");       
+        
+        Assert.assertEquals(expected.getValue(), actual.getValue());       
         
     }
 

@@ -59,12 +59,7 @@ public class NanopubController {
 		ResponseWrapper result = new ResponseWrapper();
         result.setValue("Thanks!");
 		return result;
-	}
-	
-
-
-	}
-		
+	}	
 
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	@ApiOperation("retrieves a single nanopub")
