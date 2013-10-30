@@ -13,6 +13,5 @@ public interface NanopubDao {
 	public Nanopub retrieveNanopub(URI uri);
 	
 	public List<URI> listNanopubs();
-//	public Nanopub retrieveNanopub();
 
 }
