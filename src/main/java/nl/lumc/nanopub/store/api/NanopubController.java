@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.openrdf.OpenRDFException;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
@@ -48,8 +50,14 @@ public class NanopubController {
 	public @ResponseBody ResponseWrapper storeNanopub(
 			@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
 			// Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
-			@ApiParam(required = true, value = "3The RDF content of the nanopublication to be published")
-			@RequestBody(required = true) String nanopub) {
+			@ApiParam(required = true, value = "4The RDF content of the nanopublication to be published")
+			@RequestBody(required = true) String nanopub,
+			final HttpServletResponse response) {
+		
+		if(! "application/x-trig".equals(contentType)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			// what should be the response body?
+		}
 		
 		Nanopub np;
 		try {
@@ -67,10 +75,10 @@ public class NanopubController {
 			e.printStackTrace();
 		}
 		
-		ResponseWrapper response = new ResponseWrapper();
-        response.setValue("Thanks for " + nanopub + " of type " + contentType);
+		ResponseWrapper responseContent = new ResponseWrapper();
+        responseContent.setValue("Thanks for " + nanopub + " of type " + contentType);
         
-        return response;
+        return responseContent;
 	}
 	
 	

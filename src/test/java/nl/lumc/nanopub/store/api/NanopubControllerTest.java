@@ -10,6 +10,8 @@ import java.net.URI;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 
@@ -18,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -70,19 +73,41 @@ public class NanopubControllerTest {
                 .andExpect(status().isNotFound());
     }
     
-  
+    
     @Test
     public void testStoreNanopubResponse() {
         
         String nanopub = "bla bla";
         String contentType = "application/xtrig";
         ResponseWrapper expected = new ResponseWrapper();        
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        ResponseWrapper actual = controller.storeNanopub(contentType, nanopub);       
+        ResponseWrapper actual = controller.storeNanopub(contentType, nanopub, httpResponse);       
         Assert.assertEquals(expected.getValue(), actual.getValue());
     }
+ 
+    @Test
+    public void testStoreNanopubResponseLegalContentType() {
+        String nanopub = "bla bla";
+        String contentType = "application/x-trig";
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        
+        controller.storeNanopub(contentType, nanopub, httpResponse);
+        
+        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_OK);
+    }
     
+    @Test
+    public void testStoreNanopubResponseIllegalContentType() {
+        String nanopub = "bla bla";
+        String contentType = "application/unsupportedMimeType";
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        
+        controller.storeNanopub(contentType, nanopub, httpResponse);
+        
+        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_BAD_REQUEST);
+    }
     
     @Test
 	public void testStoreNanopub() throws Exception {
