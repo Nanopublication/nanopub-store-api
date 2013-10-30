@@ -82,6 +82,15 @@ public class NanopubControllerTest {
         ResponseWrapper actual = controller.storeNanopub(contentType, nanopub);       
         Assert.assertEquals(expected.getValue(), actual.getValue());
     }
+    
+    
+    @Test
+	public void testStoreNanopub() throws Exception {
+		// NanopubDao dao = Mock...
+    	// Inject mock.
+    	// Call method.
+    	// Check that dao.storeNanopub is called with correct input (Nanopub).
+	}
   
     
     @Test
