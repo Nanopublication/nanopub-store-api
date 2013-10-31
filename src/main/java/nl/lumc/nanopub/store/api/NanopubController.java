@@ -61,17 +61,19 @@ public class NanopubController {
             @RequestBody(required = true) String nanopub,
             final HttpServletResponse response) {        
         
-        if (!"application/x-trig".equals(contentType)) {            
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            // what should be the response body?		
+        if(! "application/x-trig".equals(contentType)) {			
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");
+            ResponseWrapper responseContent = new ResponseWrapper();
+            responseContent.setValue("Currently only application/x-trig is supported");
+            return(responseContent);
         }
         
         Nanopub np;
         
         try {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-            this.getNanopubDao().storeNanopub(np);
-            System.out.println(nanopub);            
+            this.getNanopubDao().storeNanopub(np);            
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
         }

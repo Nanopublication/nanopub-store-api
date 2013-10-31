@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.lumc.nanopub.store.test.utils;
+package nl.lumc.nanopub.store.api.utils;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import org.slf4j.Logger;
+import nl.lumc.nanopub.store.api.NanopubController;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class NanopublicationFileOperation {
     
-        private static final Logger logger
-            = LoggerFactory.getLogger(NanopublicationFileOperation.class);
-
+    private static final org.slf4j.Logger logger
+            = LoggerFactory.getLogger(NanopubController.class);
+    
     /**
      * <P>
      * To get the content of the file stored in the test resources package.
@@ -35,7 +35,7 @@ public class NanopublicationFileOperation {
             content = FileOperation.readFile(fileURL.getPath(),
              StandardCharsets.UTF_8);
         } catch (IOException ex) {
-            logger.warn("Problem reading nanopub content", ex);
+            logger.warn("NanopublicationFileOperation failed ",ex);
         }        
         return content;
     }
