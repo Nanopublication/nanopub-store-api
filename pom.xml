@@ -23,6 +23,7 @@
 		
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <com.fasterxml.jackson.version>2.2.3</com.fasterxml.jackson.version>
+        <org.openrdf.sesame.version>2.7.7</org.openrdf.sesame.version>
     </properties>
 	
     <dependencies>
@@ -115,11 +116,6 @@
             <version>1</version>
         </dependency>
         <dependency>
-           <groupId>org.semweb4j</groupId>
-           <artifactId>rdf2go.api</artifactId>
-           <version>4.8.3</version>
-       </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>1.9.5</version>
@@ -131,30 +127,16 @@
         	<artifactId>nanopub</artifactId>
         	<version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.openrdf.sesame</groupId>
+            <artifactId>sesame-repository-sail</artifactId>
+            <version>${org.openrdf.sesame.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openrdf.sesame</groupId>
+            <artifactId>sesame-sail-memory</artifactId>
+            <version>${org.openrdf.sesame.version}</version>
+        </dependency>
     </dependencies>
-    
-    <repositories>       
-    	<repository>
-           <id>semweb4j-repo</id>
-           <name>Semweb4j.org maven repo</name>
-           <url>http://semweb4j.org/repo/</url>
-           <releases>
-               <enabled>true</enabled>
-           </releases>
-       </repository>
-       <repository>
-           <id>semweb4j-snapshots</id>
-           <name>Semweb4j.org maven snapshot repo</name>
-           <url>http://semweb4j.org/snapshots/</url>
-           <releases>
-               <enabled>false</enabled>
-           </releases>
-           <snapshots>
-               <enabled>true</enabled>
-               <updatePolicy>always</updatePolicy>
-               <checksumPolicy>fail</checksumPolicy>
-           </snapshots>
-       	</repository>
-      </repositories>
 
 </project>
