@@ -17,7 +17,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Controller
 @RequestMapping("/mint-uri")
 public class MintUriController {
-	private static final Logger logger = LoggerFactory.getLogger(NanopubController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MintUriController.class);
 
 	
 	/**
