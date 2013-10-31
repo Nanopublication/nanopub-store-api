@@ -7,7 +7,11 @@ package nl.lumc.nanopub.store.api;
 
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 
 
@@ -51,6 +57,8 @@ public class NanopubControllerTest {
     
     @Inject
     private NanopubController controller;
+    
+    private NanopubDao nanopubDao;
 
     private MockMvc mockMvc;
 
@@ -58,6 +66,20 @@ public class NanopubControllerTest {
     public void setup() {
       //mockMvc = webAppContextSetup(this.wac).build();
         mockMvc = standaloneSetup(controller).build();
+        nanopubDao = mock(NanopubDao.class);
+        
+        List<URI> uris = null; 
+        
+        try {            
+            uris = Collections.
+                    singletonList(new URI("http://mydomain.com/nanopubs/1"));
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(NanopubControllerTest.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
+        
+        when(nanopubDao.listNanopubs()).thenReturn(uris);
+        controller.setNanopubDao(nanopubDao);
     }
     
 
@@ -107,16 +129,7 @@ public class NanopubControllerTest {
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
         Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_BAD_REQUEST);
-    }
-    
-    @Test
-	public void testStoreNanopub() throws Exception {
-		// NanopubDao dao = Mock...
-    	// Inject mock.
-    	// Call method.
-    	// Check that dao.storeNanopub is called with correct input (Nanopub).
-	}
-  
+    }  
     
     @Test
     public void testRetrieveNanopubsListURLMapping() throws Exception {
@@ -126,9 +139,6 @@ public class NanopubControllerTest {
 
     @Test
     public void testRetrieveNanopubsList() throws Exception {
-//        ResponseWrapper expected = new ResponseWrapper();
-//        expected.setValue("Thanks!");        
-        
         List<URI> result = controller.listNanopubs();
         assertNotNull(result);	
     }
