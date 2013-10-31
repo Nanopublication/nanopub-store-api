@@ -5,12 +5,17 @@ import java.util.List;
 
 import ch.tkuhn.nanopub.Nanopub;
 
-
-public interface NanopubDao {
+/**
+ * 
+ * @author Eelke, Mark, Reinout, Rajaram
+ * @since 30-10-2013
+ * @version 0.1
+ */
+public interface NanopubDao {	
 	
-	public URI storeNanopub(Nanopub nanopub);
+    public URI storeNanopub(Nanopub nanopub);	
 	
-	public Nanopub retrieveNanopub(URI uri);
+    public Nanopub retrieveNanopub(URI uri);	
 	
-	public List<URI> listNanopubs();
+    public List<URI> listNanopubs();
 }

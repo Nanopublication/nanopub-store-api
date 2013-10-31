@@ -6,18 +6,21 @@
 package nl.lumc.nanopub.store.api;
 
 
+import ch.tkuhn.nanopub.MalformedNanopubException;
+import ch.tkuhn.nanopub.Nanopub;
+import ch.tkuhn.nanopub.NanopubImpl;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
+import nl.lumc.nanopub.store.test.utils.NanopublicationFileOperation;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,6 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
+import org.openrdf.OpenRDFException;
+import org.openrdf.rio.RDFFormat;
 
 
 
@@ -58,27 +63,20 @@ public class NanopubControllerTest {
     @Inject
     private NanopubController controller;
     
+    //@Inject
+    private NanopublicationFileOperation npFileOperation = 
+            new NanopublicationFileOperation();
+    
     private NanopubDao nanopubDao;
 
     private MockMvc mockMvc;
 
     @Before
-    public void setup() {
+    public void setup() throws URISyntaxException, 
+    MalformedNanopubException, OpenRDFException, IOException {
       //mockMvc = webAppContextSetup(this.wac).build();
         mockMvc = standaloneSetup(controller).build();
-        nanopubDao = mock(NanopubDao.class);
-        
-        List<URI> uris = null; 
-        
-        try {            
-            uris = Collections.
-                    singletonList(new URI("http://mydomain.com/nanopubs/1"));
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(NanopubControllerTest.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
-        
-        when(nanopubDao.listNanopubs()).thenReturn(uris);
+        nanopubDao = mock(NanopubDao.class);        
         controller.setNanopubDao(nanopubDao);
     }
     
@@ -97,15 +95,22 @@ public class NanopubControllerTest {
     
     
     @Test
-    public void testStoreNanopubResponse() {
+    public void testStoreNanopubResponse() throws MalformedNanopubException, 
+    OpenRDFException, IOException, URISyntaxException {
         
-        String nanopub = "bla bla";
+        String nanopub = npFileOperation.getNanopub("/validNanopub/np1.trig");
+        
+        Nanopub np = new NanopubImpl(nanopub, RDFFormat.TRIG);
+        URI uri = new URI("http://mydomain.com/nanopubs/1");        
+        when(nanopubDao.storeNanopub(np)).thenReturn(uri);
+        
         String contentType = "application/xtrig";
         ResponseWrapper expected = new ResponseWrapper();        
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        ResponseWrapper actual = controller.storeNanopub(contentType, nanopub, httpResponse);       
+        ResponseWrapper actual = controller.storeNanopub(contentType, 
+                nanopub, httpResponse);       
         Assert.assertEquals(expected.getValue(), actual.getValue());
     }
  
@@ -117,7 +122,8 @@ public class NanopubControllerTest {
         
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_OK);
+        Assert.assertEquals(httpResponse.getStatus(), 
+                HttpServletResponse.SC_OK);
     }
     
     @Test
@@ -128,7 +134,8 @@ public class NanopubControllerTest {
         
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_BAD_REQUEST);
+        Assert.assertEquals(httpResponse.getStatus(), 
+                HttpServletResponse.SC_BAD_REQUEST);
     }  
     
     @Test
@@ -139,8 +146,15 @@ public class NanopubControllerTest {
 
     @Test
     public void testRetrieveNanopubsList() throws Exception {
+        
+        URI uri = new URI("http://mydomain.com/nanopubs/1");
+        List<URI> uris = Collections.singletonList(uri);
+        when(nanopubDao.listNanopubs()).thenReturn(uris);
+        
         List<URI> result = controller.listNanopubs();
         assertNotNull(result);	
     }
+    
+    
     
 }

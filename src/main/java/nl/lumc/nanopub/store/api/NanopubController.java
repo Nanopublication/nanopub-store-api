@@ -65,10 +65,11 @@ public class NanopubController {
         }
         
         Nanopub np;
+        URI uri;
 		
         try {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-            this.getNanopubDao().storeNanopub(np);
+            uri = this.getNanopubDao().storeNanopub(np);
             System.out.println(nanopub);            
         } catch (MalformedNanopubException e) {			
             // TODO Auto-generated catch block			
