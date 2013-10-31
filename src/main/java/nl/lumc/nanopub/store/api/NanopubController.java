@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
@@ -32,7 +31,7 @@ import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
 /**
- * 
+ *
  * @author Eelke, Mark, Reinout, Rajaram
  * @since 25-10-2013
  * @version 0.2
@@ -40,94 +39,87 @@ import nl.lumc.nanopub.store.dao.NanopubDaoException;
 @Controller
 @RequestMapping("/nanopubs")
 public class NanopubController {    
-    private static final Logger logger = 
-            LoggerFactory.getLogger(NanopubController.class);
-    private NanopubDao nanopubDao;	
-	
+
+    private static final Logger logger
+            = LoggerFactory.getLogger(NanopubController.class);
+    private NanopubDao nanopubDao;
+
     /**
-     * 
+     *
      * @param contentType
      * @param nanopub
      * @param response
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation("Stores a nanopublication")
-    public @ResponseBody ResponseWrapper storeNanopub(
+    public @ResponseBody
+    ResponseWrapper storeNanopub(
             @RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
             // Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
             @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
             @RequestBody(required = true) String nanopub,
-            final HttpServletResponse response) {		
-		
-        if(! "application/x-trig".equals(contentType)) {			
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);			
+            final HttpServletResponse response) {        
+        
+        if (!"application/x-trig".equals(contentType)) {            
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             // what should be the response body?		
         }
         
         Nanopub np;
-		
+        
         try {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
             this.getNanopubDao().storeNanopub(np);
             System.out.println(nanopub);            
-        } catch (NanopubDaoException e) {			
-            // TODO Auto-generated catch block			
-            e.printStackTrace();		
-        } catch (MalformedNanopubException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (OpenRDFException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+        } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
+            logger.warn("Could not store nanopub", e);
+        }
+        
         ResponseWrapper responseContent = new ResponseWrapper();
-        responseContent.setValue("Thanks for " + nanopub + " of type " 
+        responseContent.setValue("Thanks for " + nanopub + " of type "
                 + contentType);
         
-        return responseContent;	
+        return responseContent;        
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    @ApiOperation("Retrieves a list of all nanopub URIs in the store.")	
-    public @ResponseBody List<URI> listNanopubs() {        
-         
+    @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
+    public @ResponseBody
+    List<URI> listNanopubs() {
+
         // TODO create cool implementation        
         List<URI> response = Collections.emptyList();
         try {
-			response = getNanopubDao().listNanopubs();
-		} catch (NanopubDaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}            
+            response = getNanopubDao().listNanopubs();
+        } catch (NanopubDaoException e) {
+            logger.warn("Could not list nanopubs", e);
+        }        
         return response;        
     }
-    
+
     /**
-     * 
+     *
      * @param id
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation("Retrieves a single nanopub")
-    public @ResponseBody Object retrieveNanopub(
-            @ApiParam(required = true, 
+    public @ResponseBody
+    Object retrieveNanopub(
+            @ApiParam(required = true,
                     value = "The identifier of the required nanopublication")
             @PathVariable final String id) {
         
-        logger.debug("retrieving nanopublication with id '{}'", id);		
+        logger.debug("retrieving nanopublication with id '{}'", id);
 	// TODO create cool implementation		
-		
-        return "This is a nanopub with the id " + id;	
-    }  
+        
+        return "This is a nanopub with the id " + id;        
+    }
 
     /**
      * @return the nanopubDao
@@ -142,7 +134,5 @@ public class NanopubController {
     public void setNanopubDao(NanopubDao nanopubDao) {
         this.nanopubDao = nanopubDao;
     }
-      
-        
     
 }
