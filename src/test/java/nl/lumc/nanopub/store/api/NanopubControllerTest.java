@@ -10,7 +10,9 @@ import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
 import java.io.IOException;
+
 import org.openrdf.model.URI;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -42,6 +44,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 
@@ -95,8 +98,7 @@ public class NanopubControllerTest {
     
     
     @Test
-    public void testStoreNanopubResponse() throws MalformedNanopubException, 
-    OpenRDFException, IOException, NanopubDaoException  {
+    public void testStoreNanopubResponse() throws MalformedNanopubException, OpenRDFException, IOException, NanopubDaoException {
         
         String nanopub = npFileOperation.getNanopub("/nl/lumc/nanopub/store/api"
                 + "/example.trig.rdf");
