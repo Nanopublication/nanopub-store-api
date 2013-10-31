@@ -2,10 +2,17 @@ package nl.lumc.nanopub.store.dao.impl;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStream;
+
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import ch.tkuhn.nanopub.Nanopub;
+import ch.tkuhn.nanopub.NanopubImpl;
+
+@Ignore
 public class NanopubDaoImplTest {
 
 	@Before
@@ -37,6 +44,9 @@ public class NanopubDaoImplTest {
 	}
 	
 	
-	
+	private Nanopub getNanopubFixture() {
+		InputStream stream = this.getClass().getResourceAsStream("../../example.trig.rdf");
+		Nanopub nanopub = new NanopubImpl(in, format)
+	}
 
 }

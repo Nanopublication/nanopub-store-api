@@ -1,11 +1,13 @@
 package nl.lumc.nanopub.store.dao.impl;
 
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import java.util.List;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.rio.RDFHandler;
 import ch.tkuhn.nanopub.Nanopub;
@@ -62,8 +64,8 @@ public class NanopubDaoImpl implements NanopubDao {
 		
 		try {
 			connection = this.repository.getConnection();
-			RDFHandler handler = new RDFInserter(connection);
-			NanopubUtils.propagateToHandler(nanopub, handler);
+			RepositoryResult<Statement> statements = connection.getStatements(null, null, null, true, uri);
+			
 		} catch (Exception e) {
 			throw new NanopubDaoException("Error storing nanopublication!", e);
 		}
