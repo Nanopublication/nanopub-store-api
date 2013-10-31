@@ -103,15 +103,15 @@ public class NanopubControllerTest {
     
     
     @Test
-    public void testStoreNanopubResponse() throws MalformedNanopubException, OpenRDFException, IOException, NanopubDaoException {
+    public void testStoreNanopubResponse() throws MalformedNanopubException, 
+    OpenRDFException, IOException, NanopubDaoException {
         
         String nanopub = npFileOperation.getNanopub("../../example.trig.rdf");
                 //getNanopub("/nl/lumc/nanopub/store"
                 //+ "/example.trig.rdf");
         
-        Nanopub np = new NanopubImpl(nanopub, RDFFormat.TRIG);
         URI uri = new URIImpl("http://mydomain.com/nanopubs/1");        
-        when(nanopubDao.storeNanopub(np)).thenReturn(uri);
+        when(nanopubDao.storeNanopub(any(Nanopub.class))).thenReturn(uri);
         
         String contentType = "application/x-trig";
         ResponseWrapper expected = new ResponseWrapper();        
@@ -131,7 +131,8 @@ public class NanopubControllerTest {
         
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_OK);
+        Assert.assertEquals(httpResponse.getStatus(), 
+                HttpServletResponse.SC_OK);
     }
     
     @Test
@@ -142,9 +143,11 @@ public class NanopubControllerTest {
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Currently only application/x-trig is supported");
         
-        ResponseWrapper actual = controller.storeNanopub(contentType, nanopub, httpResponse);
+        ResponseWrapper actual = controller.storeNanopub(contentType, 
+                nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_NOT_ACCEPTABLE);
+        Assert.assertEquals(httpResponse.getStatus(), 
+                HttpServletResponse.SC_NOT_ACCEPTABLE);
         Assert.assertEquals(expected.getValue(), actual.getValue());
     }  
 
