@@ -1,14 +1,14 @@
 package nl.lumc.nanopub.store.api;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.URI;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
+import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
 /**
  * 
@@ -55,7 +56,7 @@ public class NanopubController {
     public @ResponseBody ResponseWrapper storeNanopub(
             @RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
             // Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
-            @ApiParam(required = true, value = "4The RDF content of the nanopublication to be published")
+            @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
             @RequestBody(required = true) String nanopub,
             final HttpServletResponse response) {		
 		
@@ -65,15 +66,24 @@ public class NanopubController {
         }
         
         Nanopub np;
-        URI uri;
 		
         try {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-            uri = this.getNanopubDao().storeNanopub(np);
+            this.getNanopubDao().storeNanopub(np);
             System.out.println(nanopub);            
-        } catch (MalformedNanopubException | OpenRDFException | IOException ex) {			
-            logger.warn("Could not store nanopublication in back-end", ex);
-        }		
+        } catch (NanopubDaoException e) {			
+            // TODO Auto-generated catch block			
+            e.printStackTrace();		
+        } catch (MalformedNanopubException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OpenRDFException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
         ResponseWrapper responseContent = new ResponseWrapper();
         responseContent.setValue("Thanks for " + nanopub + " of type " 
@@ -92,7 +102,12 @@ public class NanopubController {
          
         // TODO create cool implementation        
         List<URI> response = Collections.emptyList();
-        response = getNanopubDao().listNanopubs();            
+        try {
+			response = getNanopubDao().listNanopubs();
+		} catch (NanopubDaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}            
         return response;        
     }
     
