@@ -5,11 +5,12 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix sio: <http://semanticscience.org/resource/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix np: <http://www.nanopub.org/nschema#> .
 
 @base <http://rdf.biosemantics.org/nanopubs/cpm/gene_disease_associations/000001> .
 
-{
-    <http://rdf.biosemantics.org/nanopubs/cpm/gene_disease_associations/000001> a np:Nanopublicaiton;
+<http://rdf.biosemantics.org/nanopubs/cpm/gene_disease_associations/000001> {
+    <http://rdf.biosemantics.org/nanopubs/cpm/gene_disease_associations/000001> a np:Nanopublication;
         np:hasAssertion :assertion;
         np:hasProvenance :provenance;
         np:hasPublicationInfo :publicationInfo .
