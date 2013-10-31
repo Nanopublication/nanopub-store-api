@@ -107,7 +107,7 @@ public class NanopubControllerTest {
         URI uri = new URIImpl("http://mydomain.com/nanopubs/1");        
         when(nanopubDao.storeNanopub(np)).thenReturn(uri);
         
-        String contentType = "application/xtrig";
+        String contentType = "application/x-trig";
         ResponseWrapper expected = new ResponseWrapper();        
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
@@ -125,20 +125,21 @@ public class NanopubControllerTest {
         
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), 
-                HttpServletResponse.SC_OK);
+        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_OK);
     }
     
     @Test
     public void testStoreNanopubResponseIllegalContentType() {
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         String nanopub = "bla bla";
         String contentType = "application/unsupportedMimeType";
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        ResponseWrapper expected = new ResponseWrapper();
+        expected.setValue("Currently only application/x-trig is supported");
         
-        controller.storeNanopub(contentType, nanopub, httpResponse);
+        ResponseWrapper actual = controller.storeNanopub(contentType, nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), 
-                HttpServletResponse.SC_BAD_REQUEST);
+        Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_NOT_ACCEPTABLE);
+        Assert.assertEquals(expected.getValue(), actual.getValue());
     }  
     
     @Test
