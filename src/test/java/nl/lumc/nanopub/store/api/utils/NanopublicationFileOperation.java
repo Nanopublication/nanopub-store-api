@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class NanopublicationFileOperation {
     
     private static final org.slf4j.Logger logger
-            = LoggerFactory.getLogger(NanopubController.class);
+            = LoggerFactory.getLogger(NanopublicationFileOperation.class);
     
     /**
      * <P>
