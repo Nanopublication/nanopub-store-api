@@ -1,6 +1,6 @@
 package nl.lumc.nanopub.store.dao;
 
-import java.net.URI;
+import org.openrdf.model.URI;
 import java.util.List;
 
 import ch.tkuhn.nanopub.Nanopub;
@@ -13,9 +13,9 @@ import ch.tkuhn.nanopub.Nanopub;
  */
 public interface NanopubDao {	
 	
-    public URI storeNanopub(Nanopub nanopub);	
+	public URI storeNanopub(Nanopub nanopub) throws NanopubDaoException;
 	
-    public Nanopub retrieveNanopub(URI uri);	
+	public Nanopub retrieveNanopub(URI uri) throws NanopubDaoException;
 	
-    public List<URI> listNanopubs();
+	public List<URI> listNanopubs() throws NanopubDaoException;
 }
