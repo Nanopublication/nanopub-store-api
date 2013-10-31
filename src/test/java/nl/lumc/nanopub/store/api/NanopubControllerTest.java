@@ -89,6 +89,11 @@ public class NanopubControllerTest {
         mockMvc.perform(get("/nanopubs/1")).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
     }
     
+    @Test
+    public void testRetrieveNanopubsListURLMapping() throws Exception {
+        mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk());     
+    }
+    
     
     @Test
     public void testStoreNanopubURLMappingInvalid() throws Exception {
@@ -141,12 +146,6 @@ public class NanopubControllerTest {
         Assert.assertEquals(httpResponse.getStatus(), HttpServletResponse.SC_NOT_ACCEPTABLE);
         Assert.assertEquals(expected.getValue(), actual.getValue());
     }  
-    
-    @Test
-    public void testRetrieveNanopubsListURLMapping() throws Exception {
-        mockMvc.perform(get("/nanopubs")).andDo(print());     
-    }
-  
 
     @Test
     public void testRetrieveNanopubsList() throws NanopubDaoException {
