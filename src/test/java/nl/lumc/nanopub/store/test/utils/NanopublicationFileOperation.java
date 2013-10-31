@@ -7,8 +7,8 @@ package nl.lumc.nanopub.store.test.utils;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -18,6 +18,9 @@ import java.util.logging.Logger;
  */
 public class NanopublicationFileOperation {
     
+        private static final Logger logger
+            = LoggerFactory.getLogger(NanopublicationFileOperation.class);
+
     /**
      * <P>
      * To get the content of the file stored in the test resources package.
@@ -32,8 +35,7 @@ public class NanopublicationFileOperation {
             content = FileOperation.readFile(fileURL.getPath(),
              StandardCharsets.UTF_8);
         } catch (IOException ex) {
-            Logger.getLogger(NanopublicationFileOperation.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            logger.warn("Problem reading nanopub content", ex);
         }        
         return content;
     }
