@@ -10,8 +10,7 @@ import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.openrdf.model.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
+import nl.lumc.nanopub.store.dao.NanopubDaoException;
 import nl.lumc.nanopub.store.test.utils.NanopublicationFileOperation;
 
 import org.junit.Assert;
@@ -42,6 +42,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 
 
@@ -72,8 +73,7 @@ public class NanopubControllerTest {
     private MockMvc mockMvc;
 
     @Before
-    public void setup() throws URISyntaxException, 
-    MalformedNanopubException, OpenRDFException, IOException {
+    public void setup() {
       //mockMvc = webAppContextSetup(this.wac).build();
         mockMvc = standaloneSetup(controller).build();
         nanopubDao = mock(NanopubDao.class);        
@@ -96,12 +96,13 @@ public class NanopubControllerTest {
     
     @Test
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
-    OpenRDFException, IOException, URISyntaxException {
+    OpenRDFException, IOException, NanopubDaoException  {
         
-        String nanopub = npFileOperation.getNanopub("/validNanopub/np1.trig");
+        String nanopub = npFileOperation.getNanopub("/nl/lumc/nanopub/store/api"
+                + "/example.trig.rdf");
         
         Nanopub np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-        URI uri = new URI("http://mydomain.com/nanopubs/1");        
+        URI uri = new URIImpl("http://mydomain.com/nanopubs/1");        
         when(nanopubDao.storeNanopub(np)).thenReturn(uri);
         
         String contentType = "application/xtrig";
@@ -145,9 +146,9 @@ public class NanopubControllerTest {
   
 
     @Test
-    public void testRetrieveNanopubsList() throws Exception {
+    public void testRetrieveNanopubsList() throws NanopubDaoException {
         
-        URI uri = new URI("http://mydomain.com/nanopubs/1");
+        URI uri = new URIImpl("http://mydomain.com/nanopubs/1");
         List<URI> uris = Collections.singletonList(uri);
         when(nanopubDao.listNanopubs()).thenReturn(uris);
         
