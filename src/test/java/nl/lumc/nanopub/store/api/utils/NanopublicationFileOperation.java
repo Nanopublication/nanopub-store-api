@@ -7,8 +7,8 @@ package nl.lumc.nanopub.store.api.utils;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import nl.lumc.nanopub.store.api.NanopubController;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,6 +17,9 @@ import java.util.logging.Logger;
  * @version 0.1
  */
 public class NanopublicationFileOperation {
+    
+    private static final org.slf4j.Logger logger
+            = LoggerFactory.getLogger(NanopubController.class);
     
     /**
      * <P>
@@ -32,8 +35,7 @@ public class NanopublicationFileOperation {
             content = FileOperation.readFile(fileURL.getPath(),
              StandardCharsets.UTF_8);
         } catch (IOException ex) {
-            Logger.getLogger(NanopublicationFileOperation.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            logger.warn("NanopublicationFileOperation failed ",ex);
         }        
         return content;
     }

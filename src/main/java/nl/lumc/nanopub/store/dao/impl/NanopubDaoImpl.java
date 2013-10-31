@@ -34,7 +34,7 @@ public class NanopubDaoImpl implements NanopubDao {
 		try {
 			connection = this.repository.getConnection();
 			RDFHandler handler = new RDFInserter(connection);
-			//NanopubUtils.propagateToHandler(nanopub, handler);
+			NanopubUtils.propagateToHandler(nanopub, handler);
 		} catch (Exception e) {
 			throw new NanopubDaoException("Error storing nanopublication!", e);
 		}
@@ -63,7 +63,7 @@ public class NanopubDaoImpl implements NanopubDao {
 		try {
 			connection = this.repository.getConnection();
 			RDFHandler handler = new RDFInserter(connection);
-		//	NanopubUtils.propagateToHandler(nanopub, handler);
+			NanopubUtils.propagateToHandler(nanopub, handler);
 		} catch (Exception e) {
 			throw new NanopubDaoException("Error storing nanopublication!", e);
 		}
