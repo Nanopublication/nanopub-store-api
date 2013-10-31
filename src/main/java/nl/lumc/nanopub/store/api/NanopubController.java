@@ -73,8 +73,7 @@ public class NanopubController {
         
         try {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-            this.getNanopubDao().storeNanopub(np);
-            System.out.println(nanopub);            
+            this.getNanopubDao().storeNanopub(np);            
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
         }
