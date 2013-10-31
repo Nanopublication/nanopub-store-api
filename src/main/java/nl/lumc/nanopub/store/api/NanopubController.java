@@ -71,15 +71,8 @@ public class NanopubController {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
             uri = this.getNanopubDao().storeNanopub(np);
             System.out.println(nanopub);            
-        } catch (MalformedNanopubException e) {			
-            // TODO Auto-generated catch block			
-            e.printStackTrace();		
-        } catch (OpenRDFException e) {			
-            // TODO Auto-generated catch block			
-            e.printStackTrace();		
-        } catch (IOException e) {			
-            // TODO Auto-generated catch block			
-            e.printStackTrace();		
+        } catch (MalformedNanopubException | OpenRDFException | IOException ex) {			
+            logger.warn("Could not store nanopublication in back-end", ex);
         }		
 		
         ResponseWrapper responseContent = new ResponseWrapper();
