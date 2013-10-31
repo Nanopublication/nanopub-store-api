@@ -105,8 +105,9 @@ public class NanopubControllerTest {
     @Test
     public void testStoreNanopubResponse() throws MalformedNanopubException, OpenRDFException, IOException, NanopubDaoException {
         
-        String nanopub = npFileOperation.getNanopub("/nl/lumc/nanopub/store"
-                + "/example.trig.rdf");
+        String nanopub = npFileOperation.getNanopub("../../example.trig.rdf");
+                //getNanopub("/nl/lumc/nanopub/store"
+                //+ "/example.trig.rdf");
         
         Nanopub np = new NanopubImpl(nanopub, RDFFormat.TRIG);
         URI uri = new URIImpl("http://mydomain.com/nanopubs/1");        
@@ -156,8 +157,6 @@ public class NanopubControllerTest {
         
         List<URI> result = controller.listNanopubs();
         assertNotNull(result);	
-    }
-    
-    
+    }   
     
 }

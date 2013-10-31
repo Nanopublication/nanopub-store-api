@@ -44,10 +44,11 @@ public class NanopubDaoImplTest {
 	}
 	
 	
-	private Nanopub getNanopubFixture() {
-		InputStream stream = this.getClass().getResourceAsStream("../../example.trig.rdf");
-		Nanopub nanopub = new NanopubImpl(in, format)
-            return null;
+	private Nanopub getNanopubFixture() {		
+            InputStream stream = this.getClass().getResourceAsStream("../../example.trig.rdf");
+            Nanopub nanopub = new NanopubImpl(in, format);            
+            
+            return nanopub;
 	}
 
 }
