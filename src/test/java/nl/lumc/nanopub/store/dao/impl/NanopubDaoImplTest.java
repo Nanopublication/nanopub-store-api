@@ -36,10 +36,9 @@ public class NanopubDaoImplTest {
     	
     @Test	
     public void testStoreNanopub() throws MalformedNanopubException,     
-            NanopubDaoException, OpenRDFException, IOException {
+            NanopubDaoException, OpenRDFException, IOException {        
         
-        URI uri = null;
-        uri = nanopubDaoImpl.storeNanopub(getNanopubFixture());        
+        URI uri = nanopubDaoImpl.storeNanopub(getNanopubFixture());        
         assertNotNull(uri);	    
     }
 	
@@ -47,17 +46,15 @@ public class NanopubDaoImplTest {
     public void testRetrieveNanopub() throws MalformedNanopubException, 
             OpenRDFException, IOException, NanopubDaoException {
         
-        Nanopub np = null;
         URI uri = getNanopubFixture().getUri();
-        np = nanopubDaoImpl.retrieveNanopub(uri);
+        Nanopub np = nanopubDaoImpl.retrieveNanopub(uri);
         assertNotNull(np);
     }
 	
     @Test	
-    public void testListNanopubs() throws NanopubDaoException {		
+    public void testListNanopubs() throws NanopubDaoException {        
         
-        List<URI> uris = null;
-        uris = nanopubDaoImpl.listNanopubs();
+        List<URI> uris = nanopubDaoImpl.listNanopubs();
         assertNotNull(uris);
         
     }
