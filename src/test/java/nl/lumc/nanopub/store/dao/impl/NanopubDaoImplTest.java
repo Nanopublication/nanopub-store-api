@@ -1,6 +1,9 @@
 package nl.lumc.nanopub.store.dao.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +14,6 @@ import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.Statement;
@@ -19,20 +21,16 @@ import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.util.ModelUtil;
 import org.openrdf.repository.Repository;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.repository.*;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.util.RepositoryUtil;
+import org.openrdf.rio.RDFFormat;
 import org.openrdf.sail.memory.MemoryStore;
-
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
 import ch.tkuhn.nanopub.NanopubUtils;
-
-import static org.mockito.Mockito.*;
 
 
 public class NanopubDaoImplTest {

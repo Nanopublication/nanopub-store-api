@@ -1,15 +1,14 @@
 package nl.lumc.nanopub.store.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import nl.lumc.nanopub.store.dao.NanopubDao;
+import nl.lumc.nanopub.store.dao.NanopubDaoException;
+
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -21,8 +20,6 @@ import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
 import ch.tkuhn.nanopub.NanopubUtils;
-import nl.lumc.nanopub.store.dao.NanopubDao;
-import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
 
 public class NanopubDaoImpl implements NanopubDao {

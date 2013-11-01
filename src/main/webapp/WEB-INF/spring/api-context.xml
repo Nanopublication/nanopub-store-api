@@ -14,6 +14,22 @@
 	-->
 	<context:property-placeholder location="classpath:/local.properties" />
 	
+	<bean name="memStore" class="org.openrdf.sail.memory.MemoryStore"
+		lazy-init="true" scope="singleton" />
+
+	<bean name="sailRepo"
+		class="org.openrdf.repository.sail.SailRepository" lazy-init="true"
+		scope="singleton" init-method="initialize"
+		destroy-method="shutDown">
+		<constructor-arg ref="memStore" />
+	</bean>
+
+	<bean name="nanopubDao"
+		class="nl.lumc.nanopub.store.dao.impl.NanopubDaoImpl"
+		scope="singleton">
+		<constructor-arg ref="sailRepo" />
+	</bean>
+
 	<!--
 		Enables the @Controller annotation, and all @RequestMapping/Param annotations.
 	-->

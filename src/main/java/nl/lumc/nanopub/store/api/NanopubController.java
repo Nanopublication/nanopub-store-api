@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +44,8 @@ public class NanopubController {
 
     private static final Logger logger
             = LoggerFactory.getLogger(NanopubController.class);
+    
+    @Autowired
     private NanopubDao nanopubDao;
 
     /**
@@ -92,16 +96,18 @@ public class NanopubController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
     public @ResponseBody
-    List<URI> listNanopubs() {
+    List<URI> listNanopubs(final HttpServletResponse response) {
+   
+        List<URI> list = Collections.emptyList();
 
-        // TODO create cool implementation        
-        List<URI> response = Collections.emptyList();
         try {
-            response = getNanopubDao().listNanopubs();
+            list = getNanopubDao().listNanopubs();
+            response.setStatus(HttpServletResponse.SC_OK);
         } catch (NanopubDaoException e) {
             logger.warn("Could not list nanopubs", e);
-        }        
-        return response;        
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }     
+        return list;        
     }
 
     /**
@@ -112,15 +118,32 @@ public class NanopubController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation("Retrieves a single nanopub")
     public @ResponseBody
-    Object retrieveNanopub(
+    Nanopub retrieveNanopub(
             @ApiParam(required = true,
                     value = "The identifier of the required nanopublication")
-            @PathVariable final String id) {
+            @PathVariable final String id,
+            final HttpServletResponse response) {
         
         logger.debug("retrieving nanopublication with id '{}'", id);
-	// TODO create cool implementation		
+        Nanopub result = null;
         
-        return "This is a nanopub with the id " + id;        
+		try {
+			URI uri = new URIImpl(id);
+			result = this.nanopubDao.retrieveNanopub(uri);
+			
+			if (result == null)
+			{
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			}
+		} catch (NanopubDaoException e) {
+            logger.warn("Could not retrieve nanopub", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} catch (IllegalArgumentException e) {
+            logger.warn("Invalid nanopub URI", e);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		}
+	     
+        return result;        
     }
 
     /**

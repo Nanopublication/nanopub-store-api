@@ -30,8 +30,9 @@ public class FileOperation {
      * @return  File content in string format.
      * @throws IOException If the file path is incorrect.
      */
-    public static String readFile(String filePath, Charset encoding) 
+    public static String readFile(String filePath, Charset encoding)
             throws IOException {
+    	
         byte[] encoded = Files.readAllBytes(Paths.get(filePath));
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
     }
