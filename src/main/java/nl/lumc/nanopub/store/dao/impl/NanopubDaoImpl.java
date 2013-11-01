@@ -2,7 +2,13 @@ package nl.lumc.nanopub.store.dao.impl;
 
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.vocabulary.RDF;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -10,7 +16,10 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.rio.RDFHandler;
+
+import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
+import ch.tkuhn.nanopub.NanopubImpl;
 import ch.tkuhn.nanopub.NanopubUtils;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
@@ -58,27 +67,12 @@ public class NanopubDaoImpl implements NanopubDao {
 
 	@Override
 	public Nanopub retrieveNanopub(URI uri) throws NanopubDaoException {
-		Nanopub nanopub = null;
 		
-		RepositoryConnection connection = null;
-		
+		Nanopub nanopub;
 		try {
-			connection = this.repository.getConnection();
-			RepositoryResult<Statement> statements = connection.getStatements(null, null, null, true, uri);
-			
-		} catch (Exception e) {
-			throw new NanopubDaoException("Error storing nanopublication!", e);
-		}
-		finally
-		{
-			if (connection != null)
-			{
-				try {
-					connection.close();
-				} catch (RepositoryException e) {
-					throw new NanopubDaoException("Error closing repository connection (after storing nanopublication)!", e);
-				}
-			}
+			nanopub = new NanopubImpl(this.repository, uri);
+		} catch (RepositoryException | MalformedNanopubException e) {
+			throw new NanopubDaoException("Error retrieving nanopub", e);
 		}
 		
 		return nanopub;
@@ -87,8 +81,37 @@ public class NanopubDaoImpl implements NanopubDao {
 
 	@Override
 	public List<URI> listNanopubs() throws NanopubDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		List<URI> result = new ArrayList<URI>();
+		RepositoryConnection connection = null;
+		
+		try {
+			connection = this.repository.getConnection();
+			RepositoryResult<Statement> resultSet = connection.getStatements(null, RDF.TYPE, Nanopub.NANOPUB_TYPE_URI, false);
+			resultSet.enableDuplicateFilter();
+			
+			while (resultSet.hasNext())
+			{
+				Statement stmt = resultSet.next();
+				result.add((URI) stmt.getSubject());
+			}
+		}
+		catch (RepositoryException e)
+		{
+			throw new NanopubDaoException("Error retrieving nanopublication list!", e);
+		}
+		finally
+		{
+			if (connection != null)
+			{
+				try {
+					connection.close();
+				} catch (RepositoryException e) {
+					throw new NanopubDaoException("Error closing connection (after listing nanopublications!", e);
+				}
+			}
+		}
+		
+		return result;
 	}
 
 }
