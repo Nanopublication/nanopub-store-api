@@ -74,9 +74,6 @@ public class NanopubDaoImplTest {
                 
 		assertTrue(RepositoryUtil.equals(repositoryReference, repositoryActual));
 	}
-        
-        
-        
 	
 
 	@Test
