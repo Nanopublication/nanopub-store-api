@@ -49,10 +49,10 @@ public class NanopubController {
     private NanopubDao nanopubDao;
 
     /**
-     *
-     * @param contentType
-     * @param nanopub
-     * @param response
+     * Stores a nanopublication
+     * @param contentType Currently only application/x-trig is supported
+     * @param nanopub A nanopublication as String
+     * @param response required to set HTTP response status
      * @return
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
@@ -90,8 +90,9 @@ public class NanopubController {
     }
 
     /**
-     *
-     * @return
+     * Retrieves a list of all nanopub URIs in the store.
+     * @param response required to set HTTP response status
+     * @return a List of URIs.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
@@ -111,9 +112,10 @@ public class NanopubController {
     }
 
     /**
-     *
-     * @param id
-     * @return
+     * Retrieves a single nanopub
+     * @param id The identifier of the required nanopublication
+     * @param response required to set HTTP response status
+     * @return a Nanopub object
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation("Retrieves a single nanopub")
