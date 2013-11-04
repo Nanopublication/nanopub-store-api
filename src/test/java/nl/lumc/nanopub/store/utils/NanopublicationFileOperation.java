@@ -4,10 +4,12 @@
  */
 package nl.lumc.nanopub.store.utils;
 
+import com.google.common.io.Files;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import nl.lumc.nanopub.store.api.NanopubController;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -28,14 +30,16 @@ public class NanopublicationFileOperation {
      * @param fileLocation  Location of the file. (E.g /validNanopub/file.trig)
      * @return  File content as a string object. 
      */
-    public  String getNanopub(String fileLocation) {
+    public  String getNanopub(String fileLocation)  {
         URL fileURL = this.getClass().getResource(fileLocation);
+        File npFile;
         String content = null;
         try {
-            content = FileOperation.readFile(fileURL.getPath(),
-             StandardCharsets.UTF_8);
-        } catch (IOException ex) {
+            npFile = new File(fileURL.toURI());
+            content = Files.readFirstLine(npFile, StandardCharsets.UTF_8);            
+        } catch (IOException | URISyntaxException ex) {
             logger.warn("NanopublicationFileOperation failed ",ex);
+        
         }        
         return content;
     }

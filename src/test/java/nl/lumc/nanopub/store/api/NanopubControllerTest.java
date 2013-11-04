@@ -101,7 +101,7 @@ public class NanopubControllerTest {
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException {
         
-        String nanopub = npFileOperation.getNanopub("../../example.trig.rdf");
+        String nanopub = npFileOperation.getNanopub("../example.trig.rdf");
                 //getNanopub("/nl/lumc/nanopub/store"
                 //+ "/example.trig.rdf");
         
