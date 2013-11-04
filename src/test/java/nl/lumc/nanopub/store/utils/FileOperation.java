@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.lumc.nanopub.store.api.utils;
+package nl.lumc.nanopub.store.utils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

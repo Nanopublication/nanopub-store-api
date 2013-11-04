@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
-import nl.lumc.nanopub.store.api.utils.NanopublicationFileOperation;
+import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
