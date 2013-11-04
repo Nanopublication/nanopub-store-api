@@ -61,16 +61,22 @@ public class NanopubDaoImplTest {
 
 	@Test
 	public void testStoreNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException, IOException {
-		int expectedSize = 1;
-		Nanopub nanopub = getNanopubFixture();
+		
+                Nanopub nanopub = getNanopubFixture();
 		
 		NanopubDao dao = new NanopubDaoImpl(repositoryActual);
-		
-		dao.storeNanopub(nanopub);
+                
+                int expectedSize = dao.listNanopubs().size() + 1;
+                
+		dao.storeNanopub(nanopub); 
 		
 		assertEquals(expectedSize, dao.listNanopubs().size());
+                
 		assertTrue(RepositoryUtil.equals(repositoryReference, repositoryActual));
 	}
+        
+        
+        
 	
 
 	@Test
