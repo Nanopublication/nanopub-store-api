@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nl.lumc.nanopub.store.api;
 
 
@@ -15,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -26,7 +20,6 @@ import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,10 +31,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 
 
@@ -56,17 +52,19 @@ import ch.tkuhn.nanopub.Nanopub;
 @ContextConfiguration("classpath:test-api-context.xml")
 public class NanopubControllerTest {
     
-    @Inject
-    private WebApplicationContext wac;
+//    @Inject
+//    private WebApplicationContext wac;
+
+    @Mock
+    private NanopubDao nanopubDao;
     
     @Inject
+    @InjectMocks
     private NanopubController controller;
     
     //@Inject
     private NanopublicationFileOperation npFileOperation = 
             new NanopublicationFileOperation();
-    
-    private NanopubDao nanopubDao;
 
     private MockMvc mockMvc;
 
@@ -75,7 +73,7 @@ public class NanopubControllerTest {
       //mockMvc = webAppContextSetup(this.wac).build();
         mockMvc = standaloneSetup(controller).build();
         nanopubDao = mock(NanopubDao.class);        
-        controller.setNanopubDao(nanopubDao);
+//        controller.setNanopubDao(nanopubDao); // should be injected by @InjectMocks
     }
     
 
@@ -115,7 +113,7 @@ public class NanopubControllerTest {
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
         ResponseWrapper actual = controller.storeNanopub(contentType, 
                 nanopub, httpResponse);       
-        Assert.assertEquals(expected.getValue(), actual.getValue());
+        assertEquals(expected.getValue(), actual.getValue());
     }
  
     @Test
@@ -126,7 +124,7 @@ public class NanopubControllerTest {
         
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), 
+        assertEquals(httpResponse.getStatus(), 
                 HttpServletResponse.SC_OK);
     }
     
@@ -141,9 +139,9 @@ public class NanopubControllerTest {
         ResponseWrapper actual = controller.storeNanopub(contentType, 
                 nanopub, httpResponse);
         
-        Assert.assertEquals(httpResponse.getStatus(), 
+        assertEquals(httpResponse.getStatus(), 
                 HttpServletResponse.SC_NOT_ACCEPTABLE);
-        Assert.assertEquals(expected.getValue(), actual.getValue());
+        assertEquals(expected.getValue(), actual.getValue());
     }
     
 
@@ -151,7 +149,7 @@ public class NanopubControllerTest {
     public void testRetrieveNanopubsList() throws NanopubDaoException {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
         URI uri = new URIImpl("http://mydomain.com/nanopubs/1");
-        List<URI> uris = Collections.singletonList(uri);
+        List<URI> uris = singletonList(uri);
         when(nanopubDao.listNanopubs()).thenReturn(uris);
         
         List<URI> result = controller.listNanopubs(httpResponse);

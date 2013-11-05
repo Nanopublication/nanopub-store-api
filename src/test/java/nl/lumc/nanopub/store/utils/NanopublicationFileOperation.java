@@ -1,27 +1,23 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package nl.lumc.nanopub.store.utils;
 
-import com.google.common.io.Files;
+import static com.google.common.io.Files.readFirstLine;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import org.slf4j.LoggerFactory;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *
  * @author Rajaram, Eelke, Mark, Reinout
- * @serial 30-10-2013
+ * @serial 05-11-2013
  * @version 0.1
  */
 public class NanopublicationFileOperation {
     
-    private static final org.slf4j.Logger logger
-            = LoggerFactory.getLogger(NanopublicationFileOperation.class);
+    private static final org.slf4j.Logger LOGGER
+            = getLogger(NanopublicationFileOperation.class);
     
     /**
      * <P>
@@ -36,9 +32,9 @@ public class NanopublicationFileOperation {
         String content = null;
         try {
             npFile = new File(fileURL.toURI());
-            content = Files.readFirstLine(npFile, StandardCharsets.UTF_8);            
+            content = readFirstLine(npFile, StandardCharsets.UTF_8);            
         } catch (IOException | URISyntaxException ex) {
-            logger.warn("NanopublicationFileOperation failed ",ex);
+            LOGGER.warn("NanopublicationFileOperation failed ",ex);
         
         }        
         return content;
