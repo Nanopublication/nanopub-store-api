@@ -25,8 +25,7 @@ import org.openrdf.rio.RDFFormat;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
-import ch.tkuhn.nanopub.NanopubUtils;
-import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
+import static ch.tkuhn.nanopub.NanopubUtils.getStatements;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -84,12 +83,10 @@ public class NanopubDaoImplTest {
         Nanopub expectedNanopub = npFileOperation.getNanopubFixture(".."
                 + "/example.trig.rdf");
 		
-        List<Statement> expectedStatements = NanopubUtils
-                .getStatements(expectedNanopub);
+        List<Statement> expectedStatements = getStatements(expectedNanopub);
         
         Nanopub actualNanopub = dao.retrieveNanopub(uri);		
-        List<Statement> actualStatements = NanopubUtils.
-                getStatements(actualNanopub);		
+        List<Statement> actualStatements = getStatements(actualNanopub);		
 		
         assertNotNull(actualNanopub);		
         assertTrue(ModelUtil.equals(expectedStatements, actualStatements));	

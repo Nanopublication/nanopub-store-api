@@ -2,7 +2,6 @@ package nl.lumc.nanopub.store.api;
 
 import java.io.IOException;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,8 +11,6 @@ import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,14 +25,17 @@ import ch.tkuhn.nanopub.NanopubImpl;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import static java.util.Collections.emptyList;
+import javax.inject.Inject;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *
  * @author Eelke, Mark, Reinout, Rajaram
- * @since 25-10-2013
+ * @since 05-11-2013
  * @version 0.2
  */
 @Controller
@@ -43,16 +43,16 @@ import nl.lumc.nanopub.store.dao.NanopubDaoException;
 public class NanopubController {    
 
     private static final Logger logger
-            = LoggerFactory.getLogger(NanopubController.class);
+            = getLogger(NanopubController.class);
     
-    @Autowired
+    @Inject
     private NanopubDao nanopubDao;
 
     /**
-     *
-     * @param contentType
-     * @param nanopub
-     * @param response
+     * Stores a nanopublication
+     * @param contentType Currently only application/x-trig is supported
+     * @param nanopub A nanopublication as String
+     * @param response required to set HTTP response status
      * @return
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
@@ -77,7 +77,7 @@ public class NanopubController {
         
         try {
             np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-            this.getNanopubDao().storeNanopub(np);            
+            nanopubDao.storeNanopub(np);            
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
         }
@@ -90,18 +90,19 @@ public class NanopubController {
     }
 
     /**
-     *
-     * @return
+     * Retrieves a list of all nanopub URIs in the store.
+     * @param response required to set HTTP response status
+     * @return a List of URIs.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
     public @ResponseBody
     List<URI> listNanopubs(final HttpServletResponse response) {
    
-        List<URI> list = Collections.emptyList();
+        List<URI> list = emptyList();
 
         try {
-            list = getNanopubDao().listNanopubs();
+            list = nanopubDao.listNanopubs();
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (NanopubDaoException e) {
             logger.warn("Could not list nanopubs", e);
@@ -111,9 +112,10 @@ public class NanopubController {
     }
 
     /**
-     *
-     * @param id
-     * @return
+     * Retrieves a single nanopub
+     * @param id The identifier of the required nanopublication
+     * @param response required to set HTTP response status
+     * @return a Nanopub object
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation("Retrieves a single nanopub")
@@ -144,20 +146,6 @@ public class NanopubController {
 		}
 	     
         return result;        
-    }
-
-    /**
-     * @return the nanopubDao
-     */
-    public NanopubDao getNanopubDao() {
-        return nanopubDao;
-    }
-
-    /**
-     * @param nanopubDao the nanopubDao to set
-     */
-    public void setNanopubDao(NanopubDao nanopubDao) {
-        this.nanopubDao = nanopubDao;
     }
     
 }

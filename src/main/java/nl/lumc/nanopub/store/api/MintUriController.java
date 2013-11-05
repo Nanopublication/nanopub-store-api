@@ -22,7 +22,7 @@ public class MintUriController {
 	
 	/**
 	 * 
-	 * @param seed
+	 * @param seed Seed for the URI
 	 * @return
 	 */
 	@RequestMapping(value = "/mint-uri", method = RequestMethod.POST)

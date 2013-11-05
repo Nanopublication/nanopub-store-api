@@ -19,7 +19,7 @@ import org.openrdf.rio.RDFHandler;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
-import ch.tkuhn.nanopub.NanopubUtils;
+import static ch.tkuhn.nanopub.NanopubUtils.propagateToHandler;
 import org.openrdf.rio.RDFHandlerException;
 
 
@@ -43,7 +43,7 @@ public class NanopubDaoImpl implements NanopubDao {
 		try {
 			connection = this.repository.getConnection();
 			RDFHandler handler = new RDFInserter(connection);
-			NanopubUtils.propagateToHandler(nanopub, handler);
+			propagateToHandler(nanopub, handler);
 		} catch (RepositoryException | RDFHandlerException e) {
 			throw new NanopubDaoException("Error storing nanopublication!", e);
 		}
