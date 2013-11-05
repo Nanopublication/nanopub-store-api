@@ -4,12 +4,18 @@
  */
 package nl.lumc.nanopub.store.utils;
 
+import ch.tkuhn.nanopub.MalformedNanopubException;
+import ch.tkuhn.nanopub.Nanopub;
+import ch.tkuhn.nanopub.NanopubImpl;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import org.openrdf.OpenRDFException;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -42,6 +48,15 @@ public class NanopublicationFileOperation {
         
         }        
         return content;
+    }
+    
+    public Nanopub getNanopubFixture(String path) throws 
+            MalformedNanopubException, OpenRDFException, IOException {		
+        
+        InputStream stream = this.getClass().
+                getResourceAsStream(path);
+        Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG); 
+        return nanopub;	
     }
     
 }

@@ -26,6 +26,7 @@ import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
 import ch.tkuhn.nanopub.NanopubUtils;
+import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,6 +47,8 @@ public class NanopubDaoImplTest {
     
     @Autowired
     private NanopubDao dao;
+    private NanopublicationFileOperation npFileOperation = new 
+            NanopublicationFileOperation();
 
     @Before
     public void setUp() throws Exception {		
@@ -61,7 +64,8 @@ public class NanopubDaoImplTest {
     public void testStoreNanopub() throws NanopubDaoException, 
     MalformedNanopubException, OpenRDFException, IOException {		
           
-        Nanopub nanopub = getNanopubFixture();        
+        Nanopub nanopub = npFileOperation.getNanopubFixture(".."
+                + "/example.trig.rdf");        
         int expectedSize = dao.listNanopubs().size() + 1;                
 	dao.storeNanopub(nanopub); 
 		
@@ -77,7 +81,8 @@ public class NanopubDaoImplTest {
                 ("http://rdf.biosemantics.org/nanopubs/cpm/"
                 + "gene_disease_associations/000001");
 		
-        Nanopub expectedNanopub = getNanopubFixture();
+        Nanopub expectedNanopub = npFileOperation.getNanopubFixture(".."
+                + "/example.trig.rdf");
 		
         List<Statement> expectedStatements = NanopubUtils
                 .getStatements(expectedNanopub);
@@ -101,14 +106,4 @@ public class NanopubDaoImplTest {
         assertEquals(expectedUri, list.get(0).stringValue());	
     }	
 	
-	
-    private Nanopub getNanopubFixture() throws MalformedNanopubException, 
-            OpenRDFException, IOException {		
-        
-        InputStream stream = this.getClass().
-                getResourceAsStream("../../example.trig.rdf");
-        Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG); 
-        return nanopub;	
-    }
-
 }
