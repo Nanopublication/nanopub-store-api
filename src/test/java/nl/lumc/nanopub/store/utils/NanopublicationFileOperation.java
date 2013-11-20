@@ -3,13 +3,15 @@ package nl.lumc.nanopub.store.utils;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
-import com.google.common.io.Files;
+import static com.google.common.io.Files.readFirstLine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import org.openrdf.OpenRDFException;
+import org.openrdf.rio.RDFFormat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**

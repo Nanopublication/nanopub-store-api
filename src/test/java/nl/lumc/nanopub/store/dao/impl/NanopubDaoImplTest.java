@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDao;
@@ -20,12 +19,11 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.util.ModelUtil;
-import org.openrdf.rio.RDFFormat;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
-import ch.tkuhn.nanopub.NanopubImpl;
 import static ch.tkuhn.nanopub.NanopubUtils.getStatements;
+import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
