@@ -80,6 +80,11 @@ public class NanopubController {
             nanopubDao.storeNanopub(np);            
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");
+            ResponseWrapper responseContent = new ResponseWrapper();
+            responseContent.setValue(e.getMessage());
+            return(responseContent);
         }
         
         ResponseWrapper responseContent = new ResponseWrapper();
