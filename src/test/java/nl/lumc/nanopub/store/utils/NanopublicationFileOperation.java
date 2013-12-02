@@ -3,7 +3,7 @@ package nl.lumc.nanopub.store.utils;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
-import static com.google.common.io.Files.readFirstLine;
+import static com.google.common.io.Files.readLines;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +35,12 @@ public class NanopublicationFileOperation {
     public  String getNanopub(String fileLocation)  {
         URL fileURL = this.getClass().getResource(fileLocation);
         File npFile;
-        String content = null;
+        String content = "";
         try {
             npFile = new File(fileURL.toURI());
-            content = readFirstLine(npFile, StandardCharsets.UTF_8);            
+            for (String fileLine : readLines(npFile, StandardCharsets.UTF_8)) {
+                content += fileLine;
+            }          
         } catch (IOException | URISyntaxException ex) {
             LOGGER.warn("NanopublicationFileOperation failed ",ex);
         
