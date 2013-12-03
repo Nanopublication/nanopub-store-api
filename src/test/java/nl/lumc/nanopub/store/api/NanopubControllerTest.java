@@ -21,13 +21,21 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
+import ch.tkuhn.nanopub.NanopubImpl;
 import org.openrdf.model.URI;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.doReturn;
 import org.mockito.MockitoAnnotations;
+import org.openrdf.rio.RDFFormat;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 
 
@@ -37,33 +45,29 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  * @since 25-10-2013
  * @version 0.3
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@WebAppConfiguration
-//@ContextConfiguration("classpath:test-api-context.xml")
-public class NanopubControllerTest {
-    
-//    @Inject
-//    private WebApplicationContext wac;
+@PrepareForTest({Nanopub.class})
+public class NanopubControllerTest {    
 
     @Mock
-    private NanopubDao nanopubDao;    
+    private NanopubDao nanopubDao;     
+    
+    private String nanopub;    
     
     @InjectMocks
     private NanopubController controller;    
     
-    private NanopublicationFileOperation npFileOperation = 
+    private final NanopublicationFileOperation npFileOperation = 
             new NanopublicationFileOperation();
 
     private MockMvc mockMvc;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         // Process mock annotations
         MockitoAnnotations.initMocks(this);
-      //mockMvc = webAppContextSetup(this.wac).build();
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        //this.nanopubDao = mock(NanopubDao.class);        
-//        controller.setNanopubDao(nanopubDao); // should be injected by @InjectMocks
+        
+        nanopub = npFileOperation.getNanopub("../example.trig.rdf");        
     }
     
 
@@ -92,11 +96,7 @@ public class NanopubControllerTest {
     
     @Test
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
-    OpenRDFException, IOException, NanopubDaoException {
-        
-        String nanopub = npFileOperation.getNanopub("../example.trig.rdf");
-                //getNanopub("/nl/lumc/nanopub/store"
-                //+ "/example.trig.rdf");
+    OpenRDFException, IOException, NanopubDaoException {        
         
         URI uri = new URIImpl("http://mydomain.com/nanopubs/1");        
         when(nanopubDao.storeNanopub(any(Nanopub.class))).thenReturn(uri);
@@ -113,9 +113,10 @@ public class NanopubControllerTest {
  
     @Test
     public void testStoreNanopubResponseLegalContentType() {
-        String nanopub = "bla bla";
+        
         String contentType = "application/x-trig";
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();       
+        
         
         controller.storeNanopub(contentType, nanopub, httpResponse);
         
@@ -126,13 +127,13 @@ public class NanopubControllerTest {
     @Test
     public void testStoreNanopubResponseIllegalContentType() {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        String nanopub = "bla bla";
+        String nanopubUnsupported = "bla bla";
         String contentType = "application/unsupportedMimeType";
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Currently only application/x-trig is supported");
         
         ResponseWrapper actual = controller.storeNanopub(contentType, 
-                nanopub, httpResponse);
+                nanopubUnsupported, httpResponse);
         
         assertEquals(httpResponse.getStatus(), 
                 HttpServletResponse.SC_NOT_ACCEPTABLE);
@@ -140,15 +141,6 @@ public class NanopubControllerTest {
     }
     
 
-    @Test
-    public void testRetrieveNanopubsList() throws NanopubDaoException {
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
-        URI uri = new URIImpl("http://mydomain.com/nanopubs/1");
-        List<URI> uris = singletonList(uri);
-        when(nanopubDao.listNanopubs()).thenReturn(uris);
-        
-        List<URI> result = controller.listNanopubs(httpResponse);
-        assertNotNull(result);	
-    }   
+     
     
 }
