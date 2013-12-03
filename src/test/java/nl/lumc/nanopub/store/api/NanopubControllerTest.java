@@ -67,6 +67,7 @@ public class NanopubControllerTest {
          //       + "/example.trig.rdf"); 
         //when(nanopubDao.retrieveNanopub(uri)).thenReturn(nanopub);
         mockMvc.perform(get("/nanopubs/"+id)).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
+        
     }
     
     @Test
