@@ -1,13 +1,11 @@
 package nl.lumc.nanopub.store.api;
 
 
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.io.IOException;
-import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
@@ -21,21 +19,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
-import ch.tkuhn.nanopub.NanopubImpl;
 import org.openrdf.model.URI;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.doReturn;
 import org.mockito.MockitoAnnotations;
-import org.openrdf.rio.RDFFormat;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 
 
@@ -45,7 +34,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @since 25-10-2013
  * @version 0.3
  */
-@PrepareForTest({Nanopub.class})
 public class NanopubControllerTest {    
 
     @Mock

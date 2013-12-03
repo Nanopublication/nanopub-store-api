@@ -8,7 +8,6 @@ package nl.lumc.nanopub.store.api;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import java.io.IOException;
-import static java.util.Collections.singletonList;
 import java.util.List;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
@@ -17,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.when;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
