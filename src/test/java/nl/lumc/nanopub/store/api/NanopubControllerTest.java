@@ -34,10 +34,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  * @since 25-10-2013
  * @version 0.3
  */
-public class NanopubControllerTest {    
+public class NanopubControllerTest {
 
     @Mock
-    private NanopubDao nanopubDao;     
+    private NanopubDao nanopubDao;
     
     private String nanopub;    
     
@@ -55,18 +55,18 @@ public class NanopubControllerTest {
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         
-        nanopub = npFileOperation.getNanopub("../example.trig.rdf");        
+        nanopub = npFileOperation.getNanopub("../example.trig.rdf");       
     }
     
 
     @Test
     public void testStoreNanopubURLMapping() throws Exception {
         String id = "1";
-        //URI uri = new URIImpl(id);
-        //Nanopub nanopub = npFileOperation.getNanopubFixture(".."
-         //       + "/example.trig.rdf"); 
-        //when(nanopubDao.retrieveNanopub(uri)).thenReturn(nanopub);
-        mockMvc.perform(get("/nanopubs/"+id)).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
+        URI uri = new URIImpl("http://rdf.nanopub.org/nanopubs/" +id);
+        Nanopub nanopub = npFileOperation.getNanopubFixture(".."
+                + "/example.trig.rdf"); 
+        when(nanopubDao.retrieveNanopub(uri)).thenReturn(nanopub);
+        mockMvc.perform(get(uri.stringValue())).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
         
     }
     

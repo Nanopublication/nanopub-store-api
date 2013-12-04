@@ -71,8 +71,6 @@ public class NanopubControllerIntegrationTest {
         ResponseWrapper actual = controller.storeNanopub(contentType, 
                 nanopub, httpResponse);       
         assertEquals(expected.getValue(), actual.getValue()); 
-        
-        
     }
     
     

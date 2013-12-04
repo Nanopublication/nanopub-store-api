@@ -12,6 +12,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import org.openrdf.OpenRDFException;
 import org.openrdf.rio.RDFFormat;
+
+import com.google.common.io.Files;
+
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -32,7 +35,7 @@ public class NanopublicationFileOperation {
      * @param fileLocation  Location of the file. (E.g /validNanopub/file.trig)
      * @return  File content as a string object. 
      */
-    public  String getNanopub(String fileLocation)  {
+    public String getNanopub(String fileLocation)  {
         URL fileURL = this.getClass().getResource(fileLocation);
         File npFile;
         String content = "";
