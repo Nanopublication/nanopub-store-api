@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.OpenRDFException;
@@ -129,13 +130,14 @@ public class NanopubController {
             @ApiParam(required = true,
                     value = "The identifier of the required nanopublication")
             @PathVariable final String id,
+            final HttpServletRequest request,
             final HttpServletResponse response) {
         
         logger.debug("retrieving nanopublication with id '{}'", id);
         Nanopub result = null;
         
 		try {
-			URI uri = new URIImpl(id);
+			URI uri = new URIImpl(request.getRequestURL().toString());
 			result = this.nanopubDao.retrieveNanopub(uri);
 			
 			if (result == null)

@@ -17,5 +17,7 @@ public interface NanopubDao {
 	
 	public Nanopub retrieveNanopub(URI uri) throws NanopubDaoException;
 	
+	public boolean hasNanopub(URI uri) throws NanopubDaoException;
+	
 	public List<URI> listNanopubs() throws NanopubDaoException;
 }

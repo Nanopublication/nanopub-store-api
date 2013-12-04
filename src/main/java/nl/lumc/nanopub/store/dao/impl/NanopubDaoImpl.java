@@ -65,17 +65,49 @@ public class NanopubDaoImpl implements NanopubDao {
 
 	@Override
 	public Nanopub retrieveNanopub(URI uri) throws NanopubDaoException {
+		Nanopub nanopub = null;
 		
-		Nanopub nanopub;
-		try {
-			nanopub = new NanopubImpl(this.repository, uri);
-		} catch (RepositoryException | MalformedNanopubException e) {
-			throw new NanopubDaoException("Error retrieving nanopub", e);
+		if (hasNanopub(uri))
+		{
+			try {
+				nanopub = new NanopubImpl(this.repository, uri);
+			} catch (RepositoryException | MalformedNanopubException e) {
+				throw new NanopubDaoException("Error retrieving nanopub", e);
+			}
 		}
 		
 		return nanopub;
 	}
 	
+
+	@Override
+	public boolean hasNanopub(URI uri) throws NanopubDaoException {
+		boolean result = false;
+		RepositoryConnection connection = null;
+		
+		try {
+			connection = this.repository.getConnection();
+			result = connection.hasStatement(uri, RDF.TYPE, Nanopub.NANOPUB_TYPE_URI, false, uri);
+		}
+		catch (RepositoryException e)
+		{
+			throw new NanopubDaoException("Error looking for nanopublication existence!", e);
+		}
+		finally
+		{
+			if (connection != null)
+			{
+				try {
+					connection.close();
+				} catch (RepositoryException e) {
+					throw new NanopubDaoException("Error closing connection (after finding np existence)!", e);
+				}
+			}
+		}
+		
+		return result;
+	}
+
 
 	@Override
 	public List<URI> listNanopubs() throws NanopubDaoException {
@@ -90,7 +122,9 @@ public class NanopubDaoImpl implements NanopubDao {
 			while (resultSet.hasNext())
 			{
 				Statement stmt = resultSet.next();
-				result.add((URI) stmt.getSubject());
+				if (stmt.getSubject() == stmt.getContext()){
+					result.add((URI) stmt.getSubject());
+				}
 			}
 		}
 		catch (RepositoryException e)
@@ -104,7 +138,7 @@ public class NanopubDaoImpl implements NanopubDao {
 				try {
 					connection.close();
 				} catch (RepositoryException e) {
-					throw new NanopubDaoException("Error closing connection (after listing nanopublications!", e);
+					throw new NanopubDaoException("Error closing connection (after listing nanopublications)!", e);
 				}
 			}
 		}
