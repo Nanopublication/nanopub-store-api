@@ -51,12 +51,13 @@ public class NanopublicationFileOperation {
         return content;
     }
     
-    public Nanopub getNanopubFixture(String path) throws 
+    
+    public Nanopub getNanopubFixture(String name) throws 
             MalformedNanopubException, OpenRDFException, IOException {		
+        String relpath = "../" + name + ".trig";
+        InputStream stream = this.getClass().getResourceAsStream(relpath);
+        Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG);
         
-        InputStream stream = this.getClass().
-                getResourceAsStream(path);
-        Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG); 
         return nanopub;	
     }
     
