@@ -7,6 +7,9 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 
+@prefix data: <http://rdf.biosemantics.org/dataset/gene_disease_associations#> .
+@prefix textmining: <http://rdf.biosemantics.org/vocabularies/text_mining#> .
+
 
 <> {
     <> a np:Nanopublication;
@@ -17,12 +20,12 @@
 }
 
 :assertion {
-    <http://rdf.biosemantics.org/dataset/gene_disease_associations#association_000001> a sio:statistical-association;
-        sio:has-measurement-value <http://rdf.biosemantics.org/dataset/gene_disease_associations#association_000001_p_value>;
+    data:association_000001 a sio:statistical-association ;
+        sio:has-measurement-value data:association_000001_p_value ;
         sio:refers-to <http://bio2rdf.org/geneid:6448>,
             <http://bio2rdf.org/omim:252900> .
 
-    <http://rdf.biosemantics.org/dataset/gene_disease_associations#association_000001_p_value> a sio:probability-value;
+    data:association_000001_p_value a sio:probability-value;
         sio:has-value "6.562E-5"^^xsd:float .
 
 }
@@ -38,7 +41,7 @@
 }
 
 :provenance {
-    :assertion prov:wasDerivedFrom <http://rdf.biosemantics.org/vocabularies/text_mining#gene_disease_concept_profiles_1980_2010>;
-        prov:wasGeneratedBy <http://rdf.biosemantics.org/vocabularies/text_mining#gene_disease_concept_profiles_matching_1980_2010> .
+    :assertion  prov:wasDerivedFrom  textmining:gene_disease_concept_profiles_1980_2010 ;
+                prov:wasGeneratedBy  textmining:gene_disease_concept_profiles_matching_1980_2010 .
 
 }
