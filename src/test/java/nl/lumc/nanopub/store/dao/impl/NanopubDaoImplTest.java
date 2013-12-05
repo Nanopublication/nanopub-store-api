@@ -26,6 +26,9 @@ import org.openrdf.model.util.ModelUtil;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.repository.util.RepositoryUtil;
+import org.openrdf.sail.memory.MemoryStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -70,13 +73,29 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test
 	public void testStoreNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException, IOException {
-
 		Nanopub nanopub = npFileOperation.getNanopubFixture("example");
+		List<Statement> expectedStatements = getStatements(nanopub);
+		Repository repositoryExpected = new SailRepository(new MemoryStore());
+		repositoryExpected.initialize();
+		addStatements(repositoryExpected, expectedStatements);
+		
 		int expectedSize = dao.listNanopubs().size() + 1;
 		dao.storeNanopub(nanopub);
 
 		assertEquals(expectedSize, dao.listNanopubs().size());
+		assertTrue(RepositoryUtil.equals(this.repository, repositoryExpected));
 	}
+	
+	@DirtiesContext
+	@Test(expected=NanopubDaoException.class)
+	public void testStoreExistingNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException, IOException {
+		Nanopub nanopub = npFileOperation.getNanopubFixture("example");
+		List<Statement> expectedStatements = getStatements(nanopub);
+		addStatements(this.repository, expectedStatements);
+		
+		dao.storeNanopub(nanopub);
+	}
+	
 
 	@DirtiesContext
 	@Test
