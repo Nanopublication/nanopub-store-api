@@ -34,9 +34,20 @@ public class NanopubDaoImpl implements NanopubDao {
 	}
 	
 
+	/**
+	 * @param nanopub The nanopublication to store.
+	 * @return the URI that can be used to retrieve the nanopublication.
+	 * @throws NanopubDaoException if the nanopublication already exists in the store, or 
+	 * when there is an error storing the nanopublication in the underlying store.
+	 */
 	@Override
 	public URI storeNanopub(Nanopub nanopub) throws NanopubDaoException {
 		URI result = nanopub.getUri();
+		
+		if (hasNanopub(result))
+		{
+			throw new NanopubDaoException("Nanopub (URI) already exists!"); 
+		}
 		
 		RepositoryConnection connection = null;
 		
