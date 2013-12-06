@@ -13,6 +13,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,6 +67,7 @@ public class NanopubController {
             // Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
             @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
             @RequestBody(required = true) String nanopub,
+            final HttpServletRequest request,
             final HttpServletResponse response) {        
         
         if(! "application/x-trig".equals(contentType)) {			
@@ -73,13 +75,15 @@ public class NanopubController {
             response.setHeader("Content-Type", "text/plain");
             ResponseWrapper responseContent = new ResponseWrapper();
             responseContent.setValue("Currently only application/x-trig is supported");
+            
             return(responseContent);
         }
         
         Nanopub np;
         
         try {
-            np = new NanopubImpl(nanopub, RDFFormat.TRIG);
+        	String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
+            np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
             nanopubDao.storeNanopub(np);            
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
@@ -87,6 +91,7 @@ public class NanopubController {
             response.setHeader("Content-Type", "text/plain");
             ResponseWrapper responseContent = new ResponseWrapper();
             responseContent.setValue(e.getMessage());
+            
             return(responseContent);
         }
         
@@ -127,6 +132,7 @@ public class NanopubController {
 	    return list;        
     }
     
+    
     /**
      * Retrieves a single nanopub
      * @param id The identifier of the required nanopublication
@@ -147,6 +153,7 @@ public class NanopubController {
         
         return fetchNanopub(response, request.getRequestURL().toString());
     }
+    
     
     private Nanopub fetchNanopub(final HttpServletResponse response, final String url) {
     	Nanopub result = null;
