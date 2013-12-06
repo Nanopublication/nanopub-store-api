@@ -37,8 +37,8 @@ public class NanopublicationFileOperation {
     
     private static final org.slf4j.Logger LOGGER
             = getLogger(NanopublicationFileOperation.class);
-	public static URI EXAMPLE_NANOPUB_URI = new URIImpl("http://rdf.biosemantics.org/nanopubs/cpm/"
-	+ "gene_disease_associations/000001");
+	public static URI EXAMPLE_NANOPUB_URI = 
+			new URIImpl("http://rdf.biosemantics.org/nanopubs/000001");
 	public static final String EXAMPLE_NANOPUB_NAME = "example";
     
     /**
