@@ -1,4 +1,4 @@
-@prefix : <http://wwww.notourdomain.com/nanopubs/cpm/gene_disease_associations/000001#> .
+@prefix : <http://wwww.notmydomain.com/nanopubs/000001#> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 @prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
@@ -10,7 +10,7 @@
 @prefix data: <http://wwww.notourdomain.com/dataset/gene_disease_associations#> .
 @prefix textmining: <http://wwww.notourdomain.com/vocabularies/text_mining#> .
 
-@base <http://wwww.notourdomain.com/nanopubs/cpm/gene_disease_associations/000001> .
+@base <http://wwww.notmydomain.com/nanopubs/000001> .
 
 
 <> {
