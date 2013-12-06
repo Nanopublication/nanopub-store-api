@@ -5,6 +5,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.*;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
@@ -42,11 +43,9 @@ public class NanopubControllerTest {
     private String nanopub;    
     
     @InjectMocks
-    private NanopubController controller;    
-    
-    private final NanopublicationFileOperation npFileOperation = 
-            new NanopublicationFileOperation();
+    private NanopubController controller; 
 
+    
     private MockMvc mockMvc;
 
     @Before
@@ -55,30 +54,28 @@ public class NanopubControllerTest {
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         
-        nanopub = npFileOperation.getNanopub("../example.trig.rdf");       
+        nanopub = NanopublicationFileOperation.getNanopubAsString("example");       
     }
     
 
     @Test
     public void testStoreNanopubURLMapping() throws Exception {
-        String id = "1";
-        URI uri = new URIImpl("http://rdf.nanopub.org/nanopubs/" +id);
-        Nanopub nanopub = npFileOperation.getNanopubFixture(".."
-                + "/example.trig.rdf"); 
-        when(nanopubDao.retrieveNanopub(uri)).thenReturn(nanopub);
-        mockMvc.perform(get(uri.stringValue())).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
+        Nanopub nanopub = NanopublicationFileOperation.getNanopubFixture("example");
+        
+        when(nanopubDao.retrieveNanopub(EXAMPLE_NANOPUB_URI)).thenReturn(nanopub);
+        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.stringValue())).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
         
     }
     
     @Test
     public void testRetrieveNanopubsListURLMapping() throws Exception {
-        mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk());     
+    	this.mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk());     
     }
     
     
     @Test
     public void testStoreNanopubURLMappingInvalid() throws Exception {
-        mockMvc.perform(get("/nanopub_invalid_url"))
+    	this.mockMvc.perform(get("/nanopub_invalid_url"))
                 .andExpect(status().isNotFound());
     }
     

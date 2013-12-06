@@ -16,18 +16,25 @@ import nl.lumc.nanopub.store.dao.NanopubDaoException;
 import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.repository.Repository;
+import org.openrdf.repository.util.RepositoryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -48,6 +55,9 @@ public class NanopubControllerIntegrationTest {
     private NanopubController controller;
     
     @Autowired
+    private Repository repository; 
+    
+    @Autowired
     private RequestMappingHandlerAdapter handlerAdapter;
 
     @Autowired
@@ -57,10 +67,12 @@ public class NanopubControllerIntegrationTest {
             new NanopublicationFileOperation();
     
     
+    @DirtiesContext
+    @Test
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
-        String nanopub = npFileOperation.getNanopub("../example.trig.rdf");        
+        String nanopub = NanopublicationFileOperation.getNanopubAsString("example");        
         
         String contentType = "application/x-trig";
         ResponseWrapper expected = new ResponseWrapper();
@@ -74,7 +86,7 @@ public class NanopubControllerIntegrationTest {
     }
     
     
-    
+    @DirtiesContext
     @Test
     public void testStoreNanopubResponse2() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
@@ -84,7 +96,7 @@ public class NanopubControllerIntegrationTest {
         ResponseWrapper expected = new ResponseWrapper();
         ObjectMapper mapper = new ObjectMapper();
         
-        String nanopub = npFileOperation.getNanopub("../example.trig.rdf");        
+        String nanopub = NanopublicationFileOperation.getNanopubAsString("example");        
         String contentType = "application/x-trig";
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);
@@ -107,14 +119,15 @@ public class NanopubControllerIntegrationTest {
     }
     
     
+    @DirtiesContext
     @Test
     public void testRetrieveNanopubsList() throws NanopubDaoException {
+    	NanopublicationFileOperation.addNanopub(this.repository, NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME);
+    	
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
-        URI uri = new 
-        URIImpl("http://rdf.biosemantics.org/nanopubs/"
-                + "cpm/gene_disease_associations/000001");            
+        URI uri = NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;            
         
-        List<URI> result = controller.listNanopubs(httpResponse);
+        List<URI> result = controller.listNanopubs(uri.stringValue(), httpResponse);
         assertNotNull(result);	
         assertEquals(result.get(0), uri);
     }  

@@ -1,31 +1,29 @@
 package nl.lumc.nanopub.store.dao.impl;
 
 import static ch.tkuhn.nanopub.NanopubUtils.getStatements;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addStatements;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.getNanopubFixture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
-import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openrdf.OpenRDFException;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.util.ModelUtil;
 import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.util.RepositoryUtil;
 import org.openrdf.sail.memory.MemoryStore;
@@ -35,7 +33,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 
 /**
@@ -50,15 +47,11 @@ import ch.tkuhn.nanopub.Nanopub;
 @ContextConfiguration("classpath:test-api-context.xml")
 public class NanopubDaoImplTest {
 
-	public static URI NANOPUB1_URI = new URIImpl("http://rdf.biosemantics.org/nanopubs/cpm/"
-			+ "gene_disease_associations/000001");
-
 	@Autowired
 	private NanopubDao dao;
+	
 	@Autowired
 	private Repository repository;
-
-	private NanopublicationFileOperation npFileOperation = new NanopublicationFileOperation();
 
 	@Before
 	public void setUp() throws Exception {
@@ -72,41 +65,42 @@ public class NanopubDaoImplTest {
 
 	@DirtiesContext
 	@Test
-	public void testStoreNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException, IOException {
-		Nanopub nanopub = npFileOperation.getNanopubFixture("example");
+	public void testStoreNanopub() throws Exception {
+		Nanopub nanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
 		List<Statement> expectedStatements = getStatements(nanopub);
 		Repository repositoryExpected = new SailRepository(new MemoryStore());
 		repositoryExpected.initialize();
 		addStatements(repositoryExpected, expectedStatements);
 		
-		int expectedSize = dao.listNanopubs().size() + 1;
-		dao.storeNanopub(nanopub);
+		int expectedSize = this.dao.listNanopubs().size() + 1;
+		this.dao.storeNanopub(nanopub);
 
-		assertEquals(expectedSize, dao.listNanopubs().size());
+		assertEquals(expectedSize, this.dao.listNanopubs().size());
 		assertTrue(RepositoryUtil.equals(this.repository, repositoryExpected));
+		
+		repositoryExpected.shutDown();
 	}
 	
 	@DirtiesContext
 	@Test(expected=NanopubDaoException.class)
-	public void testStoreExistingNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException, IOException {
-		Nanopub nanopub = npFileOperation.getNanopubFixture("example");
+	public void testStoreExistingNanopub() throws Exception {
+		Nanopub nanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
 		List<Statement> expectedStatements = getStatements(nanopub);
 		addStatements(this.repository, expectedStatements);
 		
-		dao.storeNanopub(nanopub);
+		this.dao.storeNanopub(nanopub);
 	}
 	
 
 	@DirtiesContext
 	@Test
-	public void testRetrieveNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException,
-			IOException {
+	public void testRetrieveNanopub() throws Exception {
 
-		Nanopub expectedNanopub = npFileOperation.getNanopubFixture("example");
+		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
-		Nanopub actualNanopub = dao.retrieveNanopub(NANOPUB1_URI);
+		Nanopub actualNanopub = this.dao.retrieveNanopub(EXAMPLE_NANOPUB_URI);
 		assertNotNull(actualNanopub);
 
 		List<Statement> actualStatements = getStatements(actualNanopub);
@@ -117,63 +111,33 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test
 	public void testHasNanopub() throws Exception {
-		Nanopub expectedNanopub = npFileOperation.getNanopubFixture("example");
+		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
 
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
-		boolean result = this.dao.hasNanopub(NANOPUB1_URI);
+		boolean result = this.dao.hasNanopub(EXAMPLE_NANOPUB_URI);
 
 		assertTrue(result);
 	}
 
 	@DirtiesContext
 	@Test
-	public void testListZeroNanopubs() throws NanopubDaoException {
-		List<URI> list = dao.listNanopubs();
+	public void testListZeroNanopubs() throws Exception {
+		List<URI> list = this.dao.listNanopubs();
 
 		assertTrue(list.isEmpty());
 	}
 
 	@DirtiesContext
 	@Test
-	public void testListOneNanopub() throws NanopubDaoException, MalformedNanopubException, OpenRDFException,
-			IOException {
-		String expectedUri = "http://rdf.biosemantics.org/nanopubs/cpm/gene_disease_associations/000001";
+	public void testListOneNanopub() throws Exception {
+		addNanopub(this.repository, EXAMPLE_NANOPUB_NAME);
 
-		Nanopub expectedNanopub = npFileOperation.getNanopubFixture("example");
-		List<Statement> expectedStatements = getStatements(expectedNanopub);
-		addStatements(this.repository, expectedStatements);
-
-		List<URI> list = dao.listNanopubs();
+		List<URI> list = this.dao.listNanopubs();
 
 		assertFalse(list.isEmpty());
-		assertEquals(expectedUri, list.get(0).stringValue());
-	}
-
-	private static boolean addStatements(Repository repo, Collection<Statement> stmts) {
-		boolean result = false;
-		RepositoryConnection connection = null;
-
-		try {
-			connection = repo.getConnection();
-			connection.add(stmts);
-			result = true;
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (RepositoryException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return result;
+		assertEquals(EXAMPLE_NANOPUB_URI, list.get(0));
 	}
 
 }
