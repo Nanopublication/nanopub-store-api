@@ -40,7 +40,8 @@ public class NanopublicationFileOperation {
 	public static URI EXAMPLE_NANOPUB_URI = 
 			new URIImpl("http://rdf.biosemantics.org/nanopubs/000001");
 	public static final String EXAMPLE_NANOPUB_NAME = "example";
-    
+	public static final String EXAMPLE_NOBASE_NANOPUB_NAME = "example_without_base";
+	
     /**
      * <P>
      * To get the content of the file stored in the test resources package.
@@ -69,7 +70,7 @@ public class NanopublicationFileOperation {
             MalformedNanopubException, OpenRDFException, IOException {		
         String relpath = "../" + name + ".trig";
         InputStream stream = NanopublicationFileOperation.class.getResourceAsStream(relpath);
-        Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG);
+        Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG, "");
         
         return nanopub;	
     }
