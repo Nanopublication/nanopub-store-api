@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
@@ -58,6 +59,7 @@ public class NanopubControllerTest {
     }
     
 
+    @DirtiesContext
     @Test
     public void testStoreNanopubURLMapping() throws Exception {
         Nanopub nanopub = NanopublicationFileOperation.getNanopubFixture("example");
@@ -67,12 +69,14 @@ public class NanopubControllerTest {
         
     }
     
+    @DirtiesContext
     @Test
     public void testRetrieveNanopubsListURLMapping() throws Exception {
     	this.mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk());     
     }
     
     
+    @DirtiesContext
     @Test
     public void testStoreNanopubURLMappingInvalid() throws Exception {
     	this.mockMvc.perform(get("/nanopub_invalid_url"))
@@ -80,6 +84,7 @@ public class NanopubControllerTest {
     }
     
     
+    @DirtiesContext
     @Test
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException {        
@@ -97,6 +102,8 @@ public class NanopubControllerTest {
         assertEquals(expected.getValue(), actual.getValue());
     }
  
+    
+    @DirtiesContext
     @Test
     public void testStoreNanopubResponseLegalContentType() {
         
@@ -110,6 +117,7 @@ public class NanopubControllerTest {
                 HttpServletResponse.SC_OK);
     }
     
+    @DirtiesContext
     @Test
     public void testStoreNanopubResponseIllegalContentType() {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
