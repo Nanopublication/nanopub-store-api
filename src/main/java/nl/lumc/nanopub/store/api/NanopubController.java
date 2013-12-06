@@ -2,6 +2,7 @@ package nl.lumc.nanopub.store.api;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -105,7 +106,7 @@ public class NanopubController {
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
     public @ResponseBody
     List<URI> listNanopubs(@RequestParam(value = "url", required = false) final String url, final HttpServletResponse response) {
-        List<URI> list = emptyList();
+        List<URI> list = new ArrayList<URI>();
    
     	logger.info("url is given as: " + url);
     	if( url == null ) { // return all nanopubs
