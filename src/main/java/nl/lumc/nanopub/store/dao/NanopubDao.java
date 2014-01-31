@@ -3,7 +3,7 @@ package nl.lumc.nanopub.store.dao;
 import org.openrdf.model.URI;
 import java.util.List;
 
-import ch.tkuhn.nanopub.Nanopub;
+import org.nanopub.Nanopub;
 
 /**
  * 

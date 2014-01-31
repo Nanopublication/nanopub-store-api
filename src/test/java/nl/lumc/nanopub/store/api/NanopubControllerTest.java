@@ -1,34 +1,39 @@
 package nl.lumc.nanopub.store.api;
 
 
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NOBASE_NANOPUB_NAME;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.*;
 
 import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
+
 import nl.lumc.nanopub.store.api.json.ResponseWrapper;
-import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
+import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import ch.tkuhn.nanopub.MalformedNanopubException;
-import ch.tkuhn.nanopub.Nanopub;
-import org.openrdf.model.URI;
-import static org.junit.Assert.assertEquals;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 

@@ -1,19 +1,27 @@
 package nl.lumc.nanopub.store.api;
 
-import java.io.IOException;
+import static org.slf4j.LoggerFactory.getLogger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.lumc.nanopub.store.api.json.ResponseWrapper;
+import nl.lumc.nanopub.store.dao.NanopubDao;
+import nl.lumc.nanopub.store.dao.NanopubDaoException;
+
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubImpl;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,18 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ch.tkuhn.nanopub.MalformedNanopubException;
-import ch.tkuhn.nanopub.Nanopub;
-import ch.tkuhn.nanopub.NanopubImpl;
-
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import static java.util.Collections.emptyList;
-import javax.inject.Inject;
-import nl.lumc.nanopub.store.api.json.ResponseWrapper;
-import nl.lumc.nanopub.store.dao.NanopubDao;
-import nl.lumc.nanopub.store.dao.NanopubDaoException;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *

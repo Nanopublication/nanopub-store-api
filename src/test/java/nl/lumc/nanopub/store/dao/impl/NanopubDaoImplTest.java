@@ -1,6 +1,6 @@
 package nl.lumc.nanopub.store.dao.impl;
 
-import static ch.tkuhn.nanopub.NanopubUtils.getStatements;
+import static org.nanopub.NanopubUtils.getStatements;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
@@ -33,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import ch.tkuhn.nanopub.Nanopub;
+import org.nanopub.Nanopub;
 
 /**
  * 

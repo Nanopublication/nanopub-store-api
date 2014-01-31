@@ -1,11 +1,16 @@
 package nl.lumc.nanopub.store.dao.impl;
 
+import static org.nanopub.NanopubUtils.propagateToHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubImpl;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
@@ -15,11 +20,6 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.rio.RDFHandler;
-
-import ch.tkuhn.nanopub.MalformedNanopubException;
-import ch.tkuhn.nanopub.Nanopub;
-import ch.tkuhn.nanopub.NanopubImpl;
-import static ch.tkuhn.nanopub.NanopubUtils.propagateToHandler;
 import org.openrdf.rio.RDFHandlerException;
 
 

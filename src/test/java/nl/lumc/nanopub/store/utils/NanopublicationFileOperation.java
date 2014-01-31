@@ -1,10 +1,9 @@
 package nl.lumc.nanopub.store.utils;
 
-import ch.tkuhn.nanopub.MalformedNanopubException;
-import ch.tkuhn.nanopub.Nanopub;
-import ch.tkuhn.nanopub.NanopubImpl;
-import static ch.tkuhn.nanopub.NanopubUtils.getStatements;
 import static com.google.common.io.Files.readLines;
+import static org.nanopub.NanopubUtils.getStatements;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubImpl;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -22,10 +24,6 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
-
-import com.google.common.io.Files;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *

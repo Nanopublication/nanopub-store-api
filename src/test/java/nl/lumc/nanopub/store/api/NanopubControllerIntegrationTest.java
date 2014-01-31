@@ -6,39 +6,36 @@
 
 package nl.lumc.nanopub.store.api;
 
-import ch.tkuhn.nanopub.MalformedNanopubException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.List;
-import javax.inject.Inject;
-import nl.lumc.nanopub.store.api.json.ResponseWrapper;
-import nl.lumc.nanopub.store.dao.NanopubDaoException;
-import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.*;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.getNanopubAsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Before;
+import java.io.IOException;
+import java.util.List;
+
+import nl.lumc.nanopub.store.api.json.ResponseWrapper;
+import nl.lumc.nanopub.store.dao.NanopubDaoException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
+import org.nanopub.MalformedNanopubException;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
-import org.openrdf.repository.util.RepositoryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.HandlerAdapter;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  *
