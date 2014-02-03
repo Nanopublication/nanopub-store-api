@@ -1,5 +1,6 @@
 package nl.lumc.nanopub.store.api;
 
+import ch.tkuhn.hashuri.rdf.TransformNanopub;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
@@ -78,11 +79,18 @@ public class NanopubController {
         }
         
         Nanopub np;
+        Nanopub npHashed;
         
         try {
         	String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
             np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
-            nanopubDao.storeNanopub(np);            
+            nanopubDao.storeNanopub(np);
+            // Hashed nanopublication
+            npHashed = TransformNanopub.transform(np, np.getUri().toString());
+            System.out.println("Nanopub hash uri = "
+                    +npHashed.getUri().toString());
+            //nanopubDao.storeNanopub(npHashed);             
+                        
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
