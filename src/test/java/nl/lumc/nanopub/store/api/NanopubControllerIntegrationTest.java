@@ -66,7 +66,7 @@ public class NanopubControllerIntegrationTest {
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
-        String nanopub = getNanopubAsString("example");        
+        String nanopub = getNanopubAsString("example_without_base");        
         
         String contentType = "application/x-trig";
         ResponseWrapper expected = new ResponseWrapper();
@@ -92,7 +92,7 @@ public class NanopubControllerIntegrationTest {
         ResponseWrapper expected = new ResponseWrapper();
         ObjectMapper mapper = new ObjectMapper();
         
-        String nanopub = getNanopubAsString("example");        
+        String nanopub = getNanopubAsString("example_without_base");        
         String contentType = "application/x-trig";
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);

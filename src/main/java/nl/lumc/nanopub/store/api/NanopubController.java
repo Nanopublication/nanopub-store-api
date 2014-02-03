@@ -69,7 +69,7 @@ public class NanopubController {
             final HttpServletRequest request,
             final HttpServletResponse response) {        
         
-        if(! "application/x-trig".equals(contentType)) {			
+        if(! contentType.contains("application/x-trig")) {			
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             response.setHeader("Content-Type", "text/plain");
             ResponseWrapper responseContent = new ResponseWrapper();
@@ -82,14 +82,15 @@ public class NanopubController {
         Nanopub npHashed;
         
         try {
+            //np = new NanopubImpl(nanopub, RDFFormat.TRIG);
         	String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
             np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
-            nanopubDao.storeNanopub(np);
+            //nanopubDao.storeNanopub(np);
             // Hashed nanopublication
             npHashed = TransformNanopub.transform(np, np.getUri().toString());
             System.out.println("Nanopub hash uri = "
                     +npHashed.getUri().toString());
-            //nanopubDao.storeNanopub(npHashed);             
+            nanopubDao.storeNanopub(npHashed);             
                         
         } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
             logger.warn("Could not store nanopub", e);
