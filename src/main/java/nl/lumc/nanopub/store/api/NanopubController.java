@@ -110,6 +110,8 @@ public class NanopubController {
                 return(responseContent);        
             }           
             //nanopubDao.storeNanopub(np);
+            // Adding published time stamp to the nanopublication
+            addTimeStamp(np);
             // Hashed nanopublication
             npHashed = TransformNanopub.transform(np, np.getUri().toString());
             
@@ -220,5 +222,24 @@ public class NanopubController {
             }
         }        
         return false;        
+    }
+    
+    private void addTimeStamp (Nanopub np) {
+        
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+        String currentTime = dateFormat.format(date);        
+        
+        
+        URI graph = np.getProvenanceUri();
+        URI nanopub = np.getUri();        
+        URI predicate = new URIImpl
+        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
+        Literal object = new LiteralImpl(currentTime);      
+                
+        Statement st = new ContextStatementImpl(nanopub, predicate, object, 
+                graph);        
+        np.getPubinfo().add(st);
+        
     }
 }

@@ -66,7 +66,7 @@ public class NanopubControllerIntegrationTest {
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
-        String nanopub = getNanopubAsString("example_without_base");        
+        String nanopub = getNanopubAsString("example");        
         
         String contentType = "application/x-trig";
         ResponseWrapper expected = new ResponseWrapper();
