@@ -34,6 +34,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.openrdf.model.Literal;
+import org.openrdf.model.Statement;
+import org.openrdf.model.impl.CalendarLiteralImpl;
+import org.openrdf.model.impl.ContextStatementImpl;
+import org.openrdf.model.impl.LiteralImpl;
 
 /**
  *
@@ -82,12 +96,23 @@ public class NanopubController {
         Nanopub npHashed;
         
         try {
-            //np = new NanopubImpl(nanopub, RDFFormat.TRIG);
-        	String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
+            //np = new NanopubImpl(nanopub, RDFFormat.TRIG);        	
+            String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
             np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
+            
+            if(nanopubPublished(np)) {			
+                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                response.setHeader("Content-Type", "text/plain");
+                ResponseWrapper responseContent = new ResponseWrapper();
+                responseContent.setValue("Could not store nanopub. "
+                        + "This nanopublication is already published");
+
+                return(responseContent);        
+            }           
             //nanopubDao.storeNanopub(np);
             // Hashed nanopublication
             npHashed = TransformNanopub.transform(np, np.getUri().toString());
+            
             System.out.println("Nanopub hash uri = "
                     +npHashed.getUri().toString());
             nanopubDao.storeNanopub(npHashed);             
@@ -182,5 +207,18 @@ public class NanopubController {
 		}
 	     
         return result;   
+    }
+    
+    private boolean nanopubPublished (Nanopub np) {
+        
+        URI publishedPredicate = new URIImpl
+        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
+        
+        for (Statement st :np.getPubinfo()) {
+            if (st.getPredicate().equals(publishedPredicate)) {
+                return true;
+            }
+        }        
+        return false;        
     }
 }

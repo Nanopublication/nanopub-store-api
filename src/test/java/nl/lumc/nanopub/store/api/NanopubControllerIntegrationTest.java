@@ -117,6 +117,39 @@ public class NanopubControllerIntegrationTest {
     
     @DirtiesContext
     @Test
+    public void testStoreNanopubResponse3() throws MalformedNanopubException, 
+    OpenRDFException, IOException, NanopubDaoException, Exception {
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response; 
+        ResponseWrapper expected = new ResponseWrapper();
+        ObjectMapper mapper = new ObjectMapper();
+        
+        String nanopub = getNanopubAsString("example_published_nanopub");        
+        String contentType = "application/x-trig";
+        
+        expected.setValue("Thanks for " + nanopub + " of type " + contentType);
+        
+        String expectedJSON = mapper.writeValueAsString(expected);
+        
+        request = new MockHttpServletRequest();
+        request.setContentType(contentType);
+        response = new MockHttpServletResponse();
+        
+        request.setMethod("POST");
+        request.setRequestURI("/nanopubs/");
+        request.setContent(nanopub.getBytes());        
+        Object handler;
+        
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);            
+        assertEquals(expectedJSON, response.getContentAsString()); 
+    
+    }
+    
+    
+    @DirtiesContext
+    @Test
     public void testRetrieveNanopubsList() throws NanopubDaoException {
     	addNanopub(this.repository, EXAMPLE_NANOPUB_NAME);
     	
