@@ -48,6 +48,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.impl.CalendarLiteralImpl;
 import org.openrdf.model.impl.ContextStatementImpl;
 import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.vocabulary.XMLSchema;
 
 /**
  *
@@ -107,7 +108,7 @@ public class NanopubController {
                 responseContent.setValue("Could not store nanopub. "
                         + "This nanopublication is already published");
 
-                return(responseContent);        
+                return(responseContent);
             }           
             //nanopubDao.storeNanopub(np);
             // Adding published time stamp to the nanopublication
@@ -226,20 +227,27 @@ public class NanopubController {
     
     private void addTimeStamp (Nanopub np) {
         
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        String currentTime = dateFormat.format(date);        
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
         
-        
-        URI graph = np.getProvenanceUri();
-        URI nanopub = np.getUri();        
-        URI predicate = new URIImpl
-        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
-        Literal object = new LiteralImpl(currentTime);      
-                
-        Statement st = new ContextStatementImpl(nanopub, predicate, object, 
-                graph);        
-        np.getPubinfo().add(st);
+        try {
+			XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+	        
+	        URI graph = np.getProvenanceUri();
+	        URI nanopub = np.getUri();        
+	        URI predicate = new URIImpl
+	        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
+	        Literal object = new LiteralImpl(xmlDate.toXMLFormat(), XMLSchema.DATETIME);      
+	                
+	        Statement st = new ContextStatementImpl(nanopub, predicate, object, 
+	                graph);        
+	        np.getPubinfo().add(st);		
+	      } catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
         
     }
 }
