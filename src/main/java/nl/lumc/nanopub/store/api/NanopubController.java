@@ -39,6 +39,7 @@ import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 /**
  *
  * @author Eelke, Mark, Reinout, Rajaram
+ * 
  * @since 05-11-2013
  * @version 0.2
  */
@@ -54,9 +55,12 @@ public class NanopubController {
     
 
     /**
+     * <p>
      * Stores a nanopublication
+     * </p>
      * @param contentType Currently only application/x-trig is supported
      * @param nanopub A nanopublication as String
+     * @param request required to get request URL
      * @param response required to set HTTP response status
      * @return
      */
@@ -75,17 +79,17 @@ public class NanopubController {
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             response.setHeader("Content-Type", "text/plain");
             ResponseWrapper responseContent = new ResponseWrapper();
-            responseContent.setValue("Currently only application/x-trig is supported");
-            
-            return(responseContent);
+            responseContent.setValue
+                ("Currently only application/x-trig is supported");            
+            return(responseContent);        
         }
         
         Nanopub np;
         Nanopub npHashed;
         
         try {
-            //np = new NanopubImpl(nanopub, RDFFormat.TRIG);        	
-            String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
+            String baseUri = new URIImpl
+                (request.getRequestURL().toString()).getNamespace();
             np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
             
             if(NanopublicationChecks.nanopubPublished(np)) {			
@@ -96,18 +100,15 @@ public class NanopubController {
                         + "This nanopublication is already published");
 
                 return(responseContent);
-            }           
-            //nanopubDao.storeNanopub(np);
+            }
             // Adding published time stamp to the nanopublication
             NanopublicationChecks.addTimeStamp(np);
             // Hashed nanopublication
-            npHashed = TransformNanopub.transform(np, np.getUri().toString());
+            npHashed = TransformNanopub.transform(np, np.getUri().toString());            
+            nanopubDao.storeNanopub(npHashed);  
             
-            System.out.println("Nanopub hash uri = "
-                    +npHashed.getUri().toString());
-            nanopubDao.storeNanopub(npHashed);             
-                        
-        } catch (NanopubDaoException | MalformedNanopubException | OpenRDFException | IOException e) {            
+        } catch (NanopubDaoException | MalformedNanopubException | 
+                OpenRDFException | IOException e) {           
             logger.warn("Could not store nanopub", e);
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             response.setHeader("Content-Type", "text/plain");
@@ -125,39 +126,49 @@ public class NanopubController {
     }
 
     /**
+     * <p>
      * Retrieves a list of all nanopub URIs in the store.
+     * </p>
+     * @param url
      * @param response required to set HTTP response status
      * @return a List of URIs.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
-    public @ResponseBody
-    List<URI> listNanopubs(@RequestParam(value = "url", required = false) final String url, final HttpServletResponse response) {
-        List<URI> list = new ArrayList<URI>();
+    public @ResponseBody List<URI> listNanopubs(
+            @RequestParam(value = "url", required = false) final String url, 
+            final HttpServletResponse response) {        
+        List<URI> list = new ArrayList<>();
    
     	logger.info("url is given as: " + url);
-    	if( url == null ) { // return all nanopubs
-    		try {
-    			list = nanopubDao.listNanopubs();
-    			response.setStatus(HttpServletResponse.SC_OK);
-    		} catch (NanopubDaoException e) {
-    			logger.warn("Could not list nanopubs", e);
-    			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    		}     
-    	} else { // return specified nanopub
-    		Nanopub res = fetchNanopub(response, url);
-    		if( res != null ) {
-    			list.add(res.getUri());
-    		}
+    	if( url == null ) { // return all nanopubs    		
+            try {    			
+                list = nanopubDao.listNanopubs();    			
+                response.setStatus(HttpServletResponse.SC_OK);    		
+            
+            } catch (NanopubDaoException e) {
+    			
+                logger.warn("Could not list nanopubs", e);
+                response.setStatus(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    		
+            }    	
+        } else { // return specified nanopub    		
+            Nanopub res = fetchNanopub(response, url);    		
+            if( res != null ) {    			
+                list.add(res.getUri());    		
+            }
     	}
-	    	
-	    return list;        
+        return list;        
     }
     
     
     /**
+     * <p>
      * Retrieves a single nanopub
+     * </p>
      * @param id The identifier of the required nanopublication
+     * @param request
      * @param response required to set HTTP response status
      * @return a Nanopub object
      */
@@ -177,25 +188,29 @@ public class NanopubController {
     }
     
     
-    private Nanopub fetchNanopub(final HttpServletResponse response, final String url) {
-    	Nanopub result = null;
-        
-		try {
-			URI uri = new URIImpl(url);
-			result = this.nanopubDao.retrieveNanopub(uri);
+    private Nanopub fetchNanopub(final HttpServletResponse response, 
+            final String url) {
+    	
+        Nanopub result = null;      
+		
+        try {			
+            URI uri = new URIImpl(url);			
+            result = this.nanopubDao.retrieveNanopub(uri);			
 			
-			if (result == null)
-			{
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			}
-		} catch (NanopubDaoException e) {
+            if (result == null)	{				
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
+            }
+		
+        } catch (NanopubDaoException e) {            
             logger.warn("Could not retrieve nanopub", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		} catch (IllegalArgumentException e) {
+		
+        } catch (IllegalArgumentException e) {
             logger.warn("Invalid nanopub URI", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		}
-	     
-        return result;   
+		
+        }	     
+        
+        return result;    
     }
 }
