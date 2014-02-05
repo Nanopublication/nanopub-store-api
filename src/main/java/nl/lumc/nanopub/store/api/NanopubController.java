@@ -66,7 +66,7 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/x-trig")
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/x-trig")
     @ApiOperation("Stores a nanopublication")
     public @ResponseBody
     ResponseWrapper storeNanopub(
@@ -138,7 +138,7 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return a List of URIs.
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
     public @ResponseBody List<URI> listNanopubs(final HttpServletResponse response) {        
         List<URI> list = new ArrayList<>();
