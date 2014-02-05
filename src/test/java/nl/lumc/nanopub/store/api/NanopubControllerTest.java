@@ -196,7 +196,7 @@ public class NanopubControllerTest {
     	
     	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);
     	
-		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string(EXAMPLE_NANOPUB_URI.stringValue()));
+		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_NANOPUB_URI.stringValue() + "\"]"));
 	}
     
     
