@@ -11,18 +11,18 @@ package nl.lumc.nanopub.store.api.json;
  * @author reinout
  */
 public class ResponseWrapper {
-    private String value;
+    private String message;
 
     public ResponseWrapper() {
         
     }
 
     public void setValue(String value) {
-        this.value = value;
+        this.message = value;
     }
     
     public String getValue() {
-        return value;
+        return message;
     } 
     
 }

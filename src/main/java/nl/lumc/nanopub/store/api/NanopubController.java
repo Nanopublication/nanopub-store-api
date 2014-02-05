@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
+import org.openrdf.model.Model;
 
 /**
  *
@@ -84,15 +85,14 @@ public class NanopubController {
             return(responseContent);        
         }
         
-        Nanopub np;
         Nanopub npHashed;
         
         try {
             String baseUri = new URIImpl
                 (request.getRequestURL().toString()).getNamespace();
-            np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
+            Model rdfGraph = NanopublicationChecks.toRDFGraph(nanopub, baseUri, RDFFormat.TRIG);
             
-            if(NanopublicationChecks.nanopubPublished(np)) {			
+            if(NanopublicationChecks.isNanopubPublished(rdfGraph)) {			
                 response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
                 response.setHeader("Content-Type", "text/plain");
                 ResponseWrapper responseContent = new ResponseWrapper();
@@ -101,21 +101,23 @@ public class NanopubController {
 
                 return(responseContent);
             }
+            
             // Adding published time stamp to the nanopublication
-            NanopublicationChecks.addTimeStamp(np);
+            NanopublicationChecks.addTimeStamp(rdfGraph);
+            Nanopub np = new NanopubImpl(rdfGraph);
             // Hashed nanopublication
             npHashed = TransformNanopub.transform(np, np.getUri().toString());            
             nanopubDao.storeNanopub(npHashed);  
             
         } catch (NanopubDaoException | MalformedNanopubException | 
-                OpenRDFException | IOException e) {           
+                OpenRDFException e) {           
             logger.warn("Could not store nanopub", e);
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             response.setHeader("Content-Type", "text/plain");
             ResponseWrapper responseContent = new ResponseWrapper();
             responseContent.setValue(e.getMessage());
             
-            return(responseContent);
+            return responseContent;
         }
         
         ResponseWrapper responseContent = new ResponseWrapper();

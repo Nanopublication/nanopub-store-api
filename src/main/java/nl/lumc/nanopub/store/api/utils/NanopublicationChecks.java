@@ -6,19 +6,33 @@
 
 package nl.lumc.nanopub.store.api.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.nanopub.Nanopub;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Model;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.ContextStatementImpl;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.util.GraphUtil;
+import org.openrdf.model.util.GraphUtilException;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.XMLSchema;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.Rio;
+import org.openrdf.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -26,7 +40,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author Rajaram Kaliyaperumal
  * @author Mark Thompson
- * @author Eelke van der Horstatement
+ * @author Eelke van der Horst
+ * @author Kees Burger
  * 
  * @since 05-02-2014
  * @version 0.1
@@ -36,32 +51,49 @@ public class NanopublicationChecks {
     private static final Logger logger
             = getLogger(NanopublicationChecks.class);
     
+    public static Model toRDFGraph(String np, String base, RDFFormat format) {
+        Model rdfGraph = null;
+
+        try {
+            InputStream stream = new ByteArrayInputStream(np.getBytes("UTF-8"));
+            rdfGraph = Rio.parse(stream, base, format);        
+        } catch (UnsupportedEncodingException ex) {
+            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RDFParseException ex) {
+            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedRDFormatException ex) {
+            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+            
+        return rdfGraph;
+    }
     
     /**
      * 
      * @param np Nanopublication object
      * @return True if the Nanopublication is published.
      */
-    public static boolean nanopubPublished (Nanopub np) {
-        
+    public static boolean isNanopubPublished (Model rdfGraph) {
+        boolean hasPublicationDate = false;
         URI publishedPredicate = new URIImpl
         ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
+
+        hasPublicationDate = rdfGraph.contains(null, publishedPredicate, null);
         
-        for (Statement st :np.getPubinfo()) {
-            if (st.getPredicate().equals(publishedPredicate)) {
-                return true;
-            }
-        }        
-        return false;        
+        return hasPublicationDate;        
     }
     
     /**
      * <p>
      * Add published on time stamp to the nanopublication.
      * </p>
+     * @param rdfGraph
      * @param np Nanopublication object
      */
-    public static void addTimeStamp (Nanopub np) {
+    public static void addTimeStamp (Model rdfGraph) {
         
         Date date = new Date();
         GregorianCalendar c = new GregorianCalendar();
@@ -72,17 +104,24 @@ public class NanopublicationChecks {
             XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().
                     newXMLGregorianCalendar(c);
 	    	        
-            URI graph = np.getProvenanceUri();	        
-            URI nanopub = np.getUri();	        
-            URI predicate = new URIImpl("http://swan.mindinformatics.org/"
+            URI publishedOn = new URIImpl("http://swan.mindinformatics.org/"
                     + "ontologies/1.2/pav/publishedOn");
-            
+            URI pubInfoContext = null;
+            URI npContext = null;
+            try {
+                pubInfoContext = GraphUtil.getUniqueObjectURI(rdfGraph, null, Nanopub.HAS_PUBINFO_URI);
+                npContext = GraphUtil.getUniqueSubjectURI(rdfGraph, RDF.TYPE, Nanopub.NANOPUB_TYPE_URI);
+
+            } catch (GraphUtilException ex) {
+                java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             Literal object = new LiteralImpl(xmlDate.toXMLFormat(), 
                     XMLSchema.DATETIME);	                
 	        
-            Statement statement = new ContextStatementImpl(nanopub, predicate, 
-                    object, graph);	        
-            np.getPubinfo().add(statement);		
+            Statement statement = new ContextStatementImpl(npContext, publishedOn, 
+                    object, pubInfoContext);	        
+            rdfGraph.add(statement);
 	      
         } catch (DatatypeConfigurationException e) {            
             logger.warn("Could not add time stamp to the nanopub", e);		
