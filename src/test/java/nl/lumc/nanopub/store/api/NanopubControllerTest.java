@@ -174,11 +174,11 @@ public class NanopubControllerTest {
         
     	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);    
 
-		List<URI> actualResponse = controller.listNanopubs(httpResponse);
+		List<String> actualResponse = controller.listNanopubs(httpResponse);
 		
 		Mockito.verify(nanopubDao).listNanopubs();
 		
-		assertEquals(expectedResponse, actualResponse);
+		assertEquals(Arrays.asList(EXAMPLE_NANOPUB_URI.stringValue()), actualResponse);
 	}
     
     
@@ -186,7 +186,20 @@ public class NanopubControllerTest {
     @Test
 	public void testListZeroNanopubs() throws Exception {
     	
-		this.mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk()).andExpect(content().string("[]"));
+		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[]"));
 	}
+    
+    
+    @Test
+	public void testListOneNanopub() throws Exception {
+    	List<URI> expectedResponse = Arrays.asList(EXAMPLE_NANOPUB_URI);
+    	
+    	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);
+    	
+		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string(EXAMPLE_NANOPUB_URI.stringValue()));
+	}
+    
+    
+    
    
 }

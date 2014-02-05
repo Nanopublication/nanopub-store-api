@@ -140,11 +140,17 @@ public class NanopubController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
-    public @ResponseBody List<URI> listNanopubs(final HttpServletResponse response) {        
-        List<URI> list = new ArrayList<>();
+    public @ResponseBody List<String> listNanopubs(final HttpServletResponse response) {        
+        List<String> list = new ArrayList<>();
  		
         try {    			
-            list = nanopubDao.listNanopubs();    			
+            List<URI> list2 = nanopubDao.listNanopubs();
+            
+            for (URI uri : list2)
+            {
+            	list.add(uri.stringValue());
+            }
+            
             response.setStatus(HttpServletResponse.SC_OK);    		
         
         } catch (NanopubDaoException e) {
