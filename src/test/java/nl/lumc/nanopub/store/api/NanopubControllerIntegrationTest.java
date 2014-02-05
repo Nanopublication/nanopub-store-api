@@ -155,7 +155,7 @@ public class NanopubControllerIntegrationTest {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
         URI uri = EXAMPLE_NANOPUB_URI;            
         
-        List<URI> result = controller.listNanopubs(uri.stringValue(), httpResponse);
+        List<URI> result = controller.listNanopubs(httpResponse);
         assertNotNull(result);	
         assertEquals(result.get(0), uri);
     }  

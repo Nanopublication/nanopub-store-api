@@ -4,6 +4,7 @@ package nl.lumc.nanopub.store.api;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NOBASE_NANOPUB_NAME;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -134,11 +135,12 @@ public class NanopubControllerTest {
     public void testStoreNanopubResponseIllegalContentType() {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         String nanopubUnsupported = "bla bla";
-        String contentType = "application/unsupportedMimeType";
+
         ResponseWrapper expected = new ResponseWrapper();
         expected.setValue("Currently only application/x-trig is supported");
         
         MockHttpServletRequest httpRequest = new MockHttpServletRequest();
+        httpRequest.setContentType("application/unsupportedMimeType");
         httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
         ResponseWrapper actual = controller.storeNanopub(nanopubUnsupported, httpRequest, httpResponse);
         
@@ -158,7 +160,12 @@ public class NanopubControllerTest {
         when(nanopubDao.retrieveNanopub(EXAMPLE_NANOPUB_URI)).thenReturn(nanopub);
         
         this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
-        
     }
+    
+    
+    @Test
+	public void testListNanopubsController() throws Exception {
+//		controller.listNanopubs(url, response);
+	}
    
 }

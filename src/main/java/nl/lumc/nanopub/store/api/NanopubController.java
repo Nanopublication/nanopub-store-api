@@ -140,30 +140,21 @@ public class NanopubController {
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
-    public @ResponseBody List<URI> listNanopubs(
-            @RequestParam(value = "url", required = false) final String url, 
-            final HttpServletResponse response) {        
+    public @ResponseBody List<URI> listNanopubs(final HttpServletResponse response) {        
         List<URI> list = new ArrayList<>();
-   
-    	logger.info("url is given as: " + url);
-    	if( url == null ) { // return all nanopubs    		
-            try {    			
-                list = nanopubDao.listNanopubs();    			
-                response.setStatus(HttpServletResponse.SC_OK);    		
+ 		
+        try {    			
+            list = nanopubDao.listNanopubs();    			
+            response.setStatus(HttpServletResponse.SC_OK);    		
+        
+        } catch (NanopubDaoException e) {
+			
+            logger.warn("Could not list nanopubs", e);
+            response.setStatus(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		
+        }  
             
-            } catch (NanopubDaoException e) {
-    			
-                logger.warn("Could not list nanopubs", e);
-                response.setStatus(
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    		
-            }    	
-        } else { // return specified nanopub    		
-            Nanopub res = fetchNanopub(response, url);    		
-            if( res != null ) {    			
-                list.add(res.getUri());    		
-            }
-    	}
         return list;        
     }
     
