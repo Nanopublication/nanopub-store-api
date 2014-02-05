@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
@@ -65,18 +66,20 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/x-trig")
     @ApiOperation("Stores a nanopublication")
     public @ResponseBody
     ResponseWrapper storeNanopub(
-            @RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
+            //@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
             // Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
             @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
             @RequestBody(required = true) String nanopub,
             final HttpServletRequest request,
             final HttpServletResponse response) {        
         
-        if(! contentType.contains("application/x-trig")) {			
+    	String contentType = request.getHeader("Content-Type");
+    	
+        if(contentType != null && ! contentType.contains("application/x-trig")) {			
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             response.setHeader("Content-Type", "text/plain");
             ResponseWrapper responseContent = new ResponseWrapper();
@@ -174,7 +177,7 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return a Nanopub object
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, consumes = {})
     @ApiOperation("Retrieves a single nanopub")
     public @ResponseBody
     Nanopub retrieveNanopub(

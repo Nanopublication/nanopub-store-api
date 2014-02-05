@@ -1017,7 +1017,7 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   
-  return "\n  <option value=\"application/json\">application/json</option>\n";
+  return "\n  <option value=\"application/x-trig\">application/x-trig</option>\n";
   }
 
   buffer += "<label for=\"parameterContentType\"></label>\n<select name=\"parameterContentType\">\n";

@@ -1,8 +1,9 @@
 package nl.lumc.nanopub.store.api.swagger;
 
-import java.net.URI;
 import java.util.List;
 
+import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
 import org.springframework.stereotype.Component;
 
 import com.mangofactory.swagger.configuration.ExtensibilityModule;
