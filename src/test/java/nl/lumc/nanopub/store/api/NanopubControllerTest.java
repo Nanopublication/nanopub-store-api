@@ -109,8 +109,7 @@ public class NanopubControllerTest {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        ResponseWrapper actual = controller.storeNanopub(contentType, 
-                nanopub, httpRequest, httpResponse);       
+        ResponseWrapper actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
         assertEquals(expected.getValue(), actual.getValue());
     }
  
@@ -124,7 +123,7 @@ public class NanopubControllerTest {
         httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();       
         
-        controller.storeNanopub(contentType, nanopub, httpRequest, httpResponse);
+        controller.storeNanopub(nanopub, httpRequest, httpResponse);
         
         assertEquals(httpResponse.getStatus(), 
                 HttpServletResponse.SC_OK);
@@ -141,8 +140,7 @@ public class NanopubControllerTest {
         
         MockHttpServletRequest httpRequest = new MockHttpServletRequest();
         httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
-        ResponseWrapper actual = controller.storeNanopub(contentType, 
-                nanopubUnsupported, httpRequest, httpResponse);
+        ResponseWrapper actual = controller.storeNanopub(nanopubUnsupported, httpRequest, httpResponse);
         
         assertEquals(httpResponse.getStatus(), 
                 HttpServletResponse.SC_NOT_ACCEPTABLE);
