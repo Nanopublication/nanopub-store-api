@@ -19,7 +19,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.nanopub.Nanopub;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Model;
-import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.ContextStatementImpl;
@@ -51,20 +50,27 @@ public class NanopublicationChecks {
     private static final Logger logger
             = getLogger(NanopublicationChecks.class);
     
+    /**
+     * <p>
+     * Create RDF graph model
+     * </p>
+     * @param np    Nanopublication 
+     * @param base  Nanopublication base URI
+     * @param format    RDF file format
+     * 
+     * @return  RDF graph model 
+     */
     public static Model toRDFGraph(String np, String base, RDFFormat format) {
         Model rdfGraph = null;
 
         try {
             InputStream stream = new ByteArrayInputStream(np.getBytes("UTF-8"));
             rdfGraph = Rio.parse(stream, base, format);        
-        } catch (UnsupportedEncodingException ex) {
-            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException  | RDFParseException 
+                | UnsupportedRDFormatException ex) {
+            logger.warn("Could not create RDF graph", ex);
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RDFParseException ex) {
-            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedRDFormatException ex) {
-            java.util.logging.Logger.getLogger(NanopublicationChecks.class.getName()).log(Level.SEVERE, null, ex);
+             logger.warn("Could not create RDF graph", ex);
         }
 
             
@@ -72,7 +78,8 @@ public class NanopublicationChecks {
     }
     
     /**
-     * 
+     * <p>
+     * </p>
      * @param np Nanopublication object
      * @return True if the Nanopublication is published.
      */

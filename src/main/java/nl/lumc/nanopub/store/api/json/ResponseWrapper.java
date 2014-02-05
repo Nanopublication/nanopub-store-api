@@ -8,21 +8,28 @@ package nl.lumc.nanopub.store.api.json;
 
 /**
  *
- * @author reinout
+ * @author Rajaram Kaliyaperumal
+ * @author Mark Thompson
+ * @author Eelke van der Horst
+ * @author Kees Burger
+ * @author Reinout van Schouwen
+ * 
+ * @since 25-05-2013
+ * @version 0.1
  */
 public class ResponseWrapper {
-    private String message;
+    private String value;
 
     public ResponseWrapper() {
         
     }
 
     public void setValue(String value) {
-        this.message = value;
+        this.value = value;
     }
     
     public String getValue() {
-        return message;
+        return value;
     } 
     
 }
