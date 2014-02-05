@@ -114,8 +114,8 @@ public class NanopubControllerTest {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        ResponseWrapper actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
-        assertEquals(expected.getValue(), actual.getValue());
+        String actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
+        assertEquals(expected.getValue(), actual);
     }
  
     
@@ -146,11 +146,11 @@ public class NanopubControllerTest {
         MockHttpServletRequest httpRequest = new MockHttpServletRequest();
         httpRequest.setContentType("application/unsupportedMimeType");
         httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
-        ResponseWrapper actual = controller.storeNanopub(nanopubUnsupported, httpRequest, httpResponse);
+        String actual = controller.storeNanopub(nanopubUnsupported, httpRequest, httpResponse);
         
         assertEquals(httpResponse.getStatus(), 
                 HttpServletResponse.SC_NOT_ACCEPTABLE);
-        assertEquals(expected.getValue(), actual.getValue());
+        assertEquals(expected.getValue(), actual);
     }
     
 

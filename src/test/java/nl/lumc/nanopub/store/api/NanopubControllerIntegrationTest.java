@@ -76,8 +76,8 @@ public class NanopubControllerIntegrationTest {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
         
         expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        ResponseWrapper actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
-        assertEquals(expected.getValue(), actual.getValue()); 
+        String actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
+        assertEquals(expected.getValue(), actual); 
     }
     
     
