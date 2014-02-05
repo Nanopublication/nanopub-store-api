@@ -34,21 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.logging.Level;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.CalendarLiteralImpl;
-import org.openrdf.model.impl.ContextStatementImpl;
-import org.openrdf.model.impl.LiteralImpl;
-import org.openrdf.model.vocabulary.XMLSchema;
+import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 
 /**
  *
@@ -65,6 +51,7 @@ public class NanopubController {
     
     @Inject
     private NanopubDao nanopubDao;
+    
 
     /**
      * Stores a nanopublication
@@ -101,7 +88,7 @@ public class NanopubController {
             String baseUri = new URIImpl(request.getRequestURL().toString()).getNamespace();
             np = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
             
-            if(nanopubPublished(np)) {			
+            if(NanopublicationChecks.nanopubPublished(np)) {			
                 response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
                 response.setHeader("Content-Type", "text/plain");
                 ResponseWrapper responseContent = new ResponseWrapper();
@@ -112,7 +99,7 @@ public class NanopubController {
             }           
             //nanopubDao.storeNanopub(np);
             // Adding published time stamp to the nanopublication
-            addTimeStamp(np);
+            NanopublicationChecks.addTimeStamp(np);
             // Hashed nanopublication
             npHashed = TransformNanopub.transform(np, np.getUri().toString());
             
@@ -210,44 +197,5 @@ public class NanopubController {
 		}
 	     
         return result;   
-    }
-    
-    private boolean nanopubPublished (Nanopub np) {
-        
-        URI publishedPredicate = new URIImpl
-        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
-        
-        for (Statement st :np.getPubinfo()) {
-            if (st.getPredicate().equals(publishedPredicate)) {
-                return true;
-            }
-        }        
-        return false;        
-    }
-    
-    private void addTimeStamp (Nanopub np) {
-        
-        Date date = new Date();
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(new Date());
-        
-        try {
-			XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-	        
-	        URI graph = np.getProvenanceUri();
-	        URI nanopub = np.getUri();        
-	        URI predicate = new URIImpl
-	        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
-	        Literal object = new LiteralImpl(xmlDate.toXMLFormat(), XMLSchema.DATETIME);      
-	                
-	        Statement st = new ContextStatementImpl(nanopub, predicate, object, 
-	                graph);        
-	        np.getPubinfo().add(st);		
-	      } catch (DatatypeConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-        
     }
 }
