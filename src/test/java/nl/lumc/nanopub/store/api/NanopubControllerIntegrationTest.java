@@ -16,14 +16,12 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.List;
 
-import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nanopub.MalformedNanopubException;
 import org.openrdf.OpenRDFException;
-import org.openrdf.model.URI;
 import org.openrdf.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,14 +33,18 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Rajaram, Eelke, Mark
+ * @author Rajaram Kaliyaperumal
+ * @author Mark Thompson
+ * @author Eelke van der Horst
+ * @author Kees Burger
+ * @author Reinout van Schouwen
+ * 
  * @since 02-12-2013
- * @version 0.1
+ * @version 0.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -63,43 +65,15 @@ public class NanopubControllerIntegrationTest {
     
     
     @DirtiesContext
-    @Test
-    @Ignore
-    public void testStoreNanopubResponse() throws MalformedNanopubException, 
+    @Test    
+    public void testStoreNanopub() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response; 
         
         String nanopub = getNanopubAsString("example");        
-        
-        String contentType = "application/x-trig";
-        ResponseWrapper expected = new ResponseWrapper();
-       
-        MockHttpServletRequest httpRequest = new MockHttpServletRequest();
-        httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
-        
-        expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        String actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
-        assertEquals(expected.getValue(), actual); 
-    }
-    
-    
-    @DirtiesContext
-    @Test
-    @Ignore
-    public void testStoreNanopubResponse2() throws MalformedNanopubException, 
-    OpenRDFException, IOException, NanopubDaoException, Exception {
-        
-        MockHttpServletRequest request;
-        MockHttpServletResponse response; 
-        ResponseWrapper expected = new ResponseWrapper();
-        ObjectMapper mapper = new ObjectMapper();
-        
-        String nanopub = getNanopubAsString("example_without_base");        
-        String contentType = "application/x-trig";
-        
-        expected.setValue("Thanks for " + nanopub + " of type " + contentType);
-        
-        String expectedJSON = mapper.writeValueAsString(expected);
+        String contentType = "application/x-trig";       
         
         request = new MockHttpServletRequest();
         request.setContentType(contentType);
@@ -112,48 +86,14 @@ public class NanopubControllerIntegrationTest {
         
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);            
-        assertEquals(expectedJSON, response.getContentAsString()); 
-    
-    }
-    
-    
-    @DirtiesContext
-    @Test
-    @Ignore
-    public void testStoreNanopubResponse3() throws MalformedNanopubException, 
-    OpenRDFException, IOException, NanopubDaoException, Exception {
-        
-        MockHttpServletRequest request;
-        MockHttpServletResponse response; 
-        ResponseWrapper expected = new ResponseWrapper();
-        ObjectMapper mapper = new ObjectMapper();
-        
-        String nanopub = getNanopubAsString("example_published_nanopub");        
-        String contentType = "application/x-trig";
-        
-        expected.setValue("Thanks for " + nanopub + " of type " + contentType);
-        
-        String expectedJSON = mapper.writeValueAsString(expected);
-        
-        request = new MockHttpServletRequest();
-        request.setContentType(contentType);
-        response = new MockHttpServletResponse();
-        
-        request.setMethod("POST");
-        request.setRequestURI("/nanopubs/");
-        request.setContent(nanopub.getBytes());        
-        Object handler;
-        
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);            
-        assertEquals(expectedJSON, response.getContentAsString()); 
-    
-    }
-    
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+        assertNotNull(response.getHeaderValue("Location"));
+        assertNotNull(response.getHeaderValue("Content-Type"));    
+    }    
     
     @DirtiesContext
     @Test
-    @Ignore
+    
     public void testRetrieveNanopubsList() throws NanopubDaoException {
     	addNanopub(this.repository, EXAMPLE_NANOPUB_NAME);
     	

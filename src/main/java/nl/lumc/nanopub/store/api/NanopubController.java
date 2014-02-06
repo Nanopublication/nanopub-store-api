@@ -127,7 +127,6 @@ public class NanopubController {
         
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setHeader("Location", npHashed.getUri().toString());
-        response.setHeader("Content-Type", RDFFormat.TRIG.toString());
         
 //        try {
 //			NanopubUtils.writeToStream(npHashed, response.getOutputStream(), RDFFormat.TRIG);
@@ -145,7 +144,8 @@ public class NanopubController {
         
         try {			
             NanopubUtils.writeToStream(npHashed, npOutStream, RDFFormat.TRIG);			
-            nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");		
+            nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");            
+            response.setHeader("Content-Type", RDFFormat.TRIG.toString());
         } catch (RDFHandlerException | UnsupportedEncodingException e) {
             nanopubStr = "\n"+e.getMessage();
 			
