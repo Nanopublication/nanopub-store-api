@@ -38,7 +38,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
@@ -73,15 +72,31 @@ public class NanopubControllerTest {
     
 
     @DirtiesContext
-    @Test
-    @Ignore
+    @Test 
     public void testStoreNanopubURLMapping() throws Exception {
-        Nanopub nanopub = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+        Nanopub nanopub = NanopublicationFileOperation.
+                getNanopubFixture(EXAMPLE_NANOPUB_NAME);
         
-        when(nanopubDao.retrieveNanopub(EXAMPLE_NANOPUB_URI)).thenReturn(nanopub);
+        when(nanopubDao.retrieveNanopub(any(URI.class))).
+                thenReturn(nanopub);
         
-        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
+        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).
+                andExpect(status().isOk());
         
+        
+    }
+    
+    @DirtiesContext
+    @Test    
+    public void testStoreLocalNanopubURLMapping() throws Exception {
+        Nanopub nanopub = NanopublicationFileOperation.
+                getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+        
+        when(nanopubDao.retrieveNanopub(any(URI.class))).
+                thenReturn(nanopub);
+        
+        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).
+                andExpect(status().isOk());
     }
     
     @DirtiesContext
@@ -121,24 +136,23 @@ public class NanopubControllerTest {
  
     
     @DirtiesContext
-    @Test
-    @Ignore
+    @Test     
     public void testStoreNanopubResponseLegalContentType() {
         
         String contentType = "application/x-trig";
         MockHttpServletRequest httpRequest = new MockHttpServletRequest();
-        httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
+        httpRequest.setContentType(contentType);
+        //httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();       
         
         controller.storeNanopub(nanopub, httpRequest, httpResponse);
         
         assertEquals(httpResponse.getStatus(), 
-                HttpServletResponse.SC_OK);
+                HttpServletResponse.SC_CREATED);
     }
     
     @DirtiesContext
-    @Test
-    @Ignore
+    @Test    
     public void testStoreNanopubResponseIllegalContentType() {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         String nanopubUnsupported = "bla bla";
@@ -158,16 +172,7 @@ public class NanopubControllerTest {
     
 
     
-    @DirtiesContext
-    @Test
-    @Ignore
-    public void testStoreLocalNanopubURLMapping() throws Exception {
-        Nanopub nanopub = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NOBASE_NANOPUB_NAME);
-        
-        when(nanopubDao.retrieveNanopub(EXAMPLE_NANOPUB_URI)).thenReturn(nanopub);
-        
-        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).andExpect(status().isOk()); //.param("np", "bla bla")); // /nanopubs/?np=bla%20bla
-    }
+    
     
     
     @Test
