@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Ignore;
 
 /**
  *
@@ -63,6 +64,7 @@ public class NanopubControllerIntegrationTest {
     
     @DirtiesContext
     @Test
+    @Ignore
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
@@ -83,6 +85,7 @@ public class NanopubControllerIntegrationTest {
     
     @DirtiesContext
     @Test
+    @Ignore
     public void testStoreNanopubResponse2() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
@@ -116,6 +119,7 @@ public class NanopubControllerIntegrationTest {
     
     @DirtiesContext
     @Test
+    @Ignore
     public void testStoreNanopubResponse3() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
@@ -149,6 +153,7 @@ public class NanopubControllerIntegrationTest {
     
     @DirtiesContext
     @Test
+    @Ignore
     public void testRetrieveNanopubsList() throws NanopubDaoException {
     	addNanopub(this.repository, EXAMPLE_NANOPUB_NAME);
     	

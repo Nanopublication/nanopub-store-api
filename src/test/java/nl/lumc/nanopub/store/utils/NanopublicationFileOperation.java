@@ -29,26 +29,28 @@ import org.openrdf.rio.RDFFormat;
  *
  * @author Rajaram, Eelke, Mark, Reinout
  * @serial 05-11-2013
- * @version 0.1
+ * @version 0.2
  */
 public class NanopublicationFileOperation {
     
     private static final org.slf4j.Logger LOGGER
             = getLogger(NanopublicationFileOperation.class);
-	public static URI EXAMPLE_NANOPUB_URI = 
-			new URIImpl("http://rdf.biosemantics.org/nanopubs/000001");
+	public static URI EXAMPLE_NANOPUB_URI = 	new URIImpl
+                ("http://rdf.biosemantics.org/nanopubs/000001");
 	public static final String EXAMPLE_NANOPUB_NAME = "example";
-	public static final String EXAMPLE_NOBASE_NANOPUB_NAME = "example_without_base";
+	public static final String EXAMPLE_NOBASE_NANOPUB_NAME 
+                = "example_without_base";
 	
     /**
      * <P>
      * To get the content of the file stored in the test resources package.
      * </P>
-     * @param name The name of the test nanopub fixture.
+     * @param fileLocation The name of the test nanopub fixture.
      * @return  File content as a string object. 
      */
     public static String getNanopubAsString(String fileLocation)  {
-        URL fileURL = NanopublicationFileOperation.class.getResource("../" + fileLocation + ".trig");
+        URL fileURL = NanopublicationFileOperation.
+                class.getResource("../" + fileLocation + ".trig");
         File npFile;
         String content = "";
         try {
@@ -67,56 +69,55 @@ public class NanopublicationFileOperation {
     public static Nanopub getNanopubFixture(String name) throws 
             MalformedNanopubException, OpenRDFException, IOException {		
         String relpath = "../" + name + ".trig";
-        InputStream stream = NanopublicationFileOperation.class.getResourceAsStream(relpath);
+        InputStream stream = NanopublicationFileOperation.class.
+                getResourceAsStream(relpath);
         Nanopub nanopub = new NanopubImpl(stream, RDFFormat.TRIG, "");
         
         return nanopub;	
     }
 
 
-	public static boolean addStatements(Repository repo, Collection<Statement> stmts) {
-		boolean result = false;
-		RepositoryConnection connection = null;
 	
-		try {
-			connection = repo.getConnection();
-			connection.add(stmts);
-			result = true;
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (RepositoryException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	
-		return result;
-	}
-	
-	
-	public static boolean addNanopub(Repository repo, String name)
-	{
-		try {
-			Nanopub nanopub = getNanopubFixture(name);
-
-			List<Statement> statements = getStatements(nanopub);
-			addStatements(repo, statements);
-			
-		} catch (MalformedNanopubException | OpenRDFException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-			return false;
-		}
-
+    public static boolean addStatements(Repository repo,                 
+            Collection<Statement> stmts) {		
+        boolean result = false;		
+        RepositoryConnection connection = null;	
 		
-		return true;
-	}
+        try {			
+            connection = repo.getConnection();			
+            connection.add(stmts);			
+            result = true;
+		
+        } catch (RepositoryException e) {		
+            LOGGER.warn("NanopublicationFileOperation failed ",e);		
+        } finally {			
+            if (connection != null) {				
+                try {					
+                    connection.close();				
+                } catch (RepositoryException e) {					
+                    LOGGER.warn("NanopublicationFileOperation failed ",e);				
+                }			
+            }		
+        }
+        return result;	
+    }
+	
+	
+	
+    public static boolean addNanopub(Repository repo, String name) {		
+        try {			
+            Nanopub nanopub = getNanopubFixture(name);
+			
+            List<Statement> statements = getStatements(nanopub);			
+            addStatements(repo, statements);			
+		
+        } catch (MalformedNanopubException | OpenRDFException | 
+                IOException e) {
+			
+            LOGGER.warn("NanopublicationFileOperation failed ",e);			
+            return false;		
+        }
+        return true;	
+    }
     
 }

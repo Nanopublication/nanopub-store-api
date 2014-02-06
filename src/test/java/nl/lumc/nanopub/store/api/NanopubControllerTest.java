@@ -100,7 +100,8 @@ public class NanopubControllerTest {
     
     
     @DirtiesContext
-    @Test
+    @Test    
+    @Ignore
     public void testStoreNanopubResponse() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException {        
         
@@ -121,6 +122,7 @@ public class NanopubControllerTest {
     
     @DirtiesContext
     @Test
+    @Ignore
     public void testStoreNanopubResponseLegalContentType() {
         
         String contentType = "application/x-trig";
@@ -136,6 +138,7 @@ public class NanopubControllerTest {
     
     @DirtiesContext
     @Test
+    @Ignore
     public void testStoreNanopubResponseIllegalContentType() {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         String nanopubUnsupported = "bla bla";

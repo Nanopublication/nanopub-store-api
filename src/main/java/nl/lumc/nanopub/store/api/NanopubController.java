@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import java.util.logging.Level;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 import org.openrdf.model.Model;
 
@@ -128,32 +129,28 @@ public class NanopubController {
         response.setHeader("Location", npHashed.getUri().toString());
         response.setHeader("Content-Type", RDFFormat.TRIG.toString());
         
-        try {
-			NanopubUtils.writeToStream(npHashed, response.getOutputStream(), RDFFormat.TRIG);
-			response.getOutputStream().flush();
-		} catch (RDFHandlerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-//        ByteArrayOutputStream npOut = new ByteArrayOutputStream();
-//        StringBuilder mBuf = new StringBuilder();
-//        
 //        try {
-//			NanopubUtils.writeToStream(npHashed, npOut, RDFFormat.TRIG);
-//			for (Byte b: npOut.toByteArray()) {
-//				mBuf.append(b.toString());
-//			}
+//			NanopubUtils.writeToStream(npHashed, response.getOutputStream(), RDFFormat.TRIG);
+//			response.getOutputStream().flush();
 //		} catch (RDFHandlerException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
-//		} //npHashed.toString();
-//        return mBuf.toString();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
         
-        return "";
+        ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();        
+        String nanopubStr = "";
+        
+        try {			
+            NanopubUtils.writeToStream(npHashed, npOutStream, RDFFormat.TRIG);			
+            nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");		
+        } catch (RDFHandlerException | UnsupportedEncodingException e) {
+            nanopubStr = "\n"+e.getMessage();
+			
+        }
+        return nanopubStr;
     }
 
     /**
