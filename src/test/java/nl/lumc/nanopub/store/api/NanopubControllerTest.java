@@ -4,10 +4,12 @@ package nl.lumc.nanopub.store.api;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NOBASE_NANOPUB_NAME;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -34,6 +36,7 @@ import org.nanopub.Nanopub;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -74,122 +77,50 @@ public class NanopubControllerTest {
     @DirtiesContext
     @Test 
     public void testStoreNanopubURLMapping() throws Exception {
-        Nanopub nanopub = NanopublicationFileOperation.
-                getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+        String content = NanopublicationFileOperation.
+                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
         
-        when(nanopubDao.retrieveNanopub(any(URI.class))).
-                thenReturn(nanopub);
-        
-        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).
-                andExpect(status().isOk());
-        
-        
+        this.mockMvc.perform(post("/nanopubs/").content(content).contentType(new MediaType("application", "x-trig"))).
+                andExpect(status().isCreated());
     }
-    
-    @DirtiesContext
-    @Test    
-    public void testStoreLocalNanopubURLMapping() throws Exception {
-        Nanopub nanopub = NanopublicationFileOperation.
-                getNanopubFixture(EXAMPLE_NANOPUB_NAME);
-        
-        when(nanopubDao.retrieveNanopub(any(URI.class))).
-                thenReturn(nanopub);
-        
-        this.mockMvc.perform(get(EXAMPLE_NANOPUB_URI.toString())).
-                andExpect(status().isOk());
-    }
-    
-    @DirtiesContext
-    @Test
-    public void testRetrieveNanopubsListURLMapping() throws Exception {
-    	this.mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk());     
-    }
-    
-    
-    @DirtiesContext
-    @Test
-    public void testStoreNanopubURLMappingInvalid() throws Exception {
-    	this.mockMvc.perform(get("/nanopub_invalid_url"))
-                .andExpect(status().isNotFound());
-    }
-    
-    
-    @DirtiesContext
-    @Test    
-    @Ignore
-    public void testStoreNanopubResponse() throws MalformedNanopubException, 
-    OpenRDFException, IOException, NanopubDaoException {        
-        
-        URI uri = new URIImpl("http://mydomain.com/nanopubs/1");        
-        when(nanopubDao.storeNanopub(any(Nanopub.class))).thenReturn(uri);
-        
-        String contentType = "application/x-trig";
-        ResponseWrapper expected = new ResponseWrapper();     
-        MockHttpServletRequest httpRequest = new MockHttpServletRequest();
-        httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        
-        expected.setValue("Thanks for " + nanopub + " of type " + contentType);        
-        String actual = controller.storeNanopub(nanopub, httpRequest, httpResponse);       
-        assertEquals(expected.getValue(), actual);
-    }
- 
-    
-    @DirtiesContext
-    @Test     
-    public void testStoreNanopubResponseLegalContentType() {
-        
-        String contentType = "application/x-trig";
-        MockHttpServletRequest httpRequest = new MockHttpServletRequest();
-        httpRequest.setContentType(contentType);
-        //httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();       
-        
-        controller.storeNanopub(nanopub, httpRequest, httpResponse);
-        
-        assertEquals(httpResponse.getStatus(), 
-                HttpServletResponse.SC_CREATED);
-    }
-    
-    @DirtiesContext
-    @Test    
-    public void testStoreNanopubResponseIllegalContentType() {
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        String nanopubUnsupported = "bla bla";
-
-        ResponseWrapper expected = new ResponseWrapper();
-        expected.setValue("Currently only application/x-trig is supported");
-        
-        MockHttpServletRequest httpRequest = new MockHttpServletRequest();
-        httpRequest.setContentType("application/unsupportedMimeType");
-        httpRequest.setRequestURI(EXAMPLE_NANOPUB_URI.stringValue());
-        String actual = controller.storeNanopub(nanopubUnsupported, httpRequest, httpResponse);
-        
-        assertEquals(httpResponse.getStatus(), 
-                HttpServletResponse.SC_NOT_ACCEPTABLE);
-        assertEquals(expected.getValue(), actual);
-    }
-    
 
     
-    
-    
-    
-    @Test
-	public void testListNanopubsController() throws Exception {
-    	List<URI> expectedResponse = Arrays.asList(EXAMPLE_NANOPUB_URI);
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();   
-        
-    	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);    
-
-		List<String> actualResponse = controller.listNanopubs(httpResponse);
-		
-		Mockito.verify(nanopubDao).listNanopubs();
-		
-		assertEquals(Arrays.asList(EXAMPLE_NANOPUB_URI.stringValue()), actualResponse);
+    @DirtiesContext
+	@Test
+	public void testStoreNanopubURLMappingInvalidMapping() throws Exception {
+		this.mockMvc.perform(get("/nanopub_invalid_url"))
+	            .andExpect(status().isNotFound());
 	}
+
+
+	@DirtiesContext
+    @Test 
+    public void testStoreNanopubWithoutContentType() throws Exception {
+        String content = NanopublicationFileOperation.
+                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
+        
+        this.mockMvc.perform(post("/nanopubs/").content(content)).
+                andExpect(status().isUnsupportedMediaType());
+    }
+	
+	
+	@DirtiesContext
+    @Test 
+    public void testStoreNanopubWithUnsupportedContentType() throws Exception {
+        String content = NanopublicationFileOperation.
+                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
+        
+        this.mockMvc.perform(post("/nanopubs/").content(content).contentType(MediaType.APPLICATION_XML)).
+                andExpect(status().isUnsupportedMediaType());
+    }    
     
     
+    @DirtiesContext
+	@Test
+	public void testListNanopubsURLMapping() throws Exception {
+		this.mockMvc.perform(get("/nanopubs/")).andExpect(status().isOk());     
+	}
+
     
     @Test
 	public void testListZeroNanopubs() throws Exception {
@@ -200,14 +131,28 @@ public class NanopubControllerTest {
     
     @Test
 	public void testListOneNanopub() throws Exception {
-    	List<URI> expectedResponse = Arrays.asList(EXAMPLE_NANOPUB_URI);
+    	List<URI> expectedResponse = Arrays.asList((URI)new URIImpl(EXAMPLE_NANOPUB_URI));
     	
     	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);
     	
-		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_NANOPUB_URI.stringValue() + "\"]"));
+		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_NANOPUB_URI + "\"]"));
 	}
     
     
+    @Test
+	public void testRetrieveNanopubURLMapping() throws Exception {
+		fail();
+	}
     
-   
+    
+    @Test
+	public void testRetrieveNanopubInvalidURI() throws Exception {
+		fail();
+    }
+    
+    
+    @Test
+	public void testRetrieveNanopub() throws Exception {
+		fail();
+	}
 }

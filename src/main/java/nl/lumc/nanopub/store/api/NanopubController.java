@@ -96,8 +96,13 @@ public class NanopubController {
         Nanopub npHashed;
         
         try {
-            String baseUri = new URIImpl
-                (request.getRequestURL().toString()).getNamespace();
+
+            String baseUri = request.getRequestURL().toString();
+            if (!baseUri.endsWith("/"))
+            {
+            	baseUri += "/";
+            }
+            
             Nanopub npSyntaxCheck = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
 
             

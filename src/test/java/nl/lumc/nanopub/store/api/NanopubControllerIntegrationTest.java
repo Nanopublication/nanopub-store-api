@@ -8,10 +8,14 @@ package nl.lumc.nanopub.store.api;
 
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_NANOPUB_NAME;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.getNanopubAsString;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -85,27 +89,56 @@ public class NanopubControllerIntegrationTest {
         Object handler;
         
         handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);            
+        handlerAdapter.handle(request, response, handler);      
+        
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
         assertNotNull(response.getHeaderValue("Location"));
         assertNotNull(response.getHeaderValue("Content-Type"));    
     }    
     
+    
     @DirtiesContext
     @Test
-    
-    public void testRetrieveNanopubsList() throws NanopubDaoException {
-    	addNanopub(this.repository, EXAMPLE_NANOPUB_NAME);
-    	
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();        
-        String uri = EXAMPLE_NANOPUB_URI.stringValue();            
+    public void testListZeroNanopubs() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setRequestURI("/nanopubs");
         
-        List<String> result = controller.listNanopubs(httpResponse);
-        assertNotNull(result);	
-        assertEquals(result.get(0), uri);
+        MockHttpServletResponse response = new MockHttpServletResponse();       
+        
+        Object handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        
+        assertEquals("[]", response.getContentAsString());
     }  
     
     
+    @DirtiesContext
+    @Test
+    public void testListNanopubs() throws Exception {
+    	addNanopub(this.repository, EXAMPLE_STORED_NANOPUB_NAME);
+    	
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setRequestURI("/nanopubs");
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();       
+       
+        Object handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        
+        assertEquals("[\"" + EXAMPLE_STORED_URI + "\"]", 
+        		response.getContentAsString());
+    }  
     
+    
+    @Test
+	public void testRetrieveNanopub() throws Exception {
+		fail();
+		
+		// Use: EXAMPLE_STORED_URI
+		// to retrieve:
+		// EXAMPLE_STORED_NANOPUB_NAME
+	}
     
 }

@@ -35,11 +35,15 @@ public class NanopublicationFileOperation {
     
     private static final org.slf4j.Logger LOGGER
             = getLogger(NanopublicationFileOperation.class);
-	public static URI EXAMPLE_NANOPUB_URI = 	new URIImpl
-                ("http://rdf.biosemantics.org/nanopubs/000001");
+	public static String EXAMPLE_NANOPUB_URI = "http://rdf.biosemantics.org/nanopubs/000001";
+	public static String EXAMPLE_STORED_URI = 
+			"http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc";
 	public static final String EXAMPLE_NANOPUB_NAME = "example";
 	public static final String EXAMPLE_NOBASE_NANOPUB_NAME 
                 = "example_without_base";
+	public static final String EXAMPLE_STORED_NANOPUB_NAME 
+    = "example_stored";
+	
 	
     /**
      * <P>

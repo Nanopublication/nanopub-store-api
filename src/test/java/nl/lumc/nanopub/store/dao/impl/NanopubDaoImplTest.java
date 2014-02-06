@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.util.ModelUtil;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.sail.SailRepository;
@@ -100,7 +101,7 @@ public class NanopubDaoImplTest {
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
-		Nanopub actualNanopub = this.dao.retrieveNanopub(EXAMPLE_NANOPUB_URI);
+		Nanopub actualNanopub = this.dao.retrieveNanopub(new URIImpl(EXAMPLE_NANOPUB_URI));
 		assertNotNull(actualNanopub);
 
 		List<Statement> actualStatements = getStatements(actualNanopub);
@@ -116,7 +117,7 @@ public class NanopubDaoImplTest {
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
-		boolean result = this.dao.hasNanopub(EXAMPLE_NANOPUB_URI);
+		boolean result = this.dao.hasNanopub(new URIImpl(EXAMPLE_NANOPUB_URI));
 
 		assertTrue(result);
 	}
@@ -137,7 +138,7 @@ public class NanopubDaoImplTest {
 		List<URI> list = this.dao.listNanopubs();
 
 		assertFalse(list.isEmpty());
-		assertEquals(EXAMPLE_NANOPUB_URI, list.get(0));
+		assertEquals(new URIImpl(EXAMPLE_NANOPUB_URI), list.get(0));
 	}
 
 }
