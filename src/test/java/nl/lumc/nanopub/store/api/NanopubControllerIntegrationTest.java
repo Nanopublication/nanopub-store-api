@@ -7,7 +7,6 @@
 package nl.lumc.nanopub.store.api;
 
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
-import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
@@ -17,7 +16,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
@@ -26,7 +27,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nanopub.MalformedNanopubException;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.Model;
+import org.openrdf.model.util.ModelUtil;
 import org.openrdf.repository.Repository;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.Rio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,6 +41,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -129,16 +136,35 @@ public class NanopubControllerIntegrationTest {
         
         assertEquals("[\"" + EXAMPLE_STORED_URI + "\"]", 
         		response.getContentAsString());
-    }  
+    }
     
     
+    @DirtiesContext
     @Test
 	public void testRetrieveNanopub() throws Exception {
-		fail();
-		
-		// Use: EXAMPLE_STORED_URI
-		// to retrieve:
-		// EXAMPLE_STORED_NANOPUB_NAME
+    	String expectedContent = getNanopubAsString("example_stored");
+
+    	addNanopub(this.repository, EXAMPLE_STORED_NANOPUB_NAME);
+    	
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setRemotePort(8080);
+        request.setParameter("key", "RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
+        request.setRequestURI("/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();       
+       
+        Object handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        
+        InputStream isExpected = new ByteArrayInputStream(expectedContent.getBytes());
+        Model modelExpected = Rio.parse(isExpected, "", RDFFormat.TRIG);
+        
+        String result = response.getContentAsString();
+        InputStream isActual = new ByteArrayInputStream(result.getBytes());
+        Model modelActual = Rio.parse(isActual, "", RDFFormat.TRIG);
+
+        assertTrue(ModelUtil.equals(modelExpected, modelActual));
 	}
     
 }

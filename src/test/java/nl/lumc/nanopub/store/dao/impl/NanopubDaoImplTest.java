@@ -2,7 +2,7 @@ package nl.lumc.nanopub.store.dao.impl;
 
 import static org.nanopub.NanopubUtils.getStatements;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
-import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addStatements;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.getNanopubFixture;
@@ -101,7 +101,7 @@ public class NanopubDaoImplTest {
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
-		Nanopub actualNanopub = this.dao.retrieveNanopub(new URIImpl(EXAMPLE_NANOPUB_URI));
+		Nanopub actualNanopub = this.dao.retrieveNanopub(new URIImpl(EXAMPLE_STORED_URI));
 		assertNotNull(actualNanopub);
 
 		List<Statement> actualStatements = getStatements(actualNanopub);
@@ -117,7 +117,7 @@ public class NanopubDaoImplTest {
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
-		boolean result = this.dao.hasNanopub(new URIImpl(EXAMPLE_NANOPUB_URI));
+		boolean result = this.dao.hasNanopub(new URIImpl(EXAMPLE_STORED_URI));
 
 		assertTrue(result);
 	}
@@ -138,7 +138,7 @@ public class NanopubDaoImplTest {
 		List<URI> list = this.dao.listNanopubs();
 
 		assertFalse(list.isEmpty());
-		assertEquals(new URIImpl(EXAMPLE_NANOPUB_URI), list.get(0));
+		assertEquals(new URIImpl(EXAMPLE_STORED_URI), list.get(0));
 	}
 
 }

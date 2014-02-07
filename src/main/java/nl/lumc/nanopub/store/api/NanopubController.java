@@ -74,7 +74,7 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/x-trig")
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/x-trig", produces = "application/x-trig")
     @ApiOperation("Stores a nanopublication")
     public @ResponseBody
     String storeNanopub(
@@ -197,50 +197,51 @@ public class NanopubController {
      * <p>
      * Retrieves a single nanopub
      * </p>
-     * @param id The identifier of the required nanopublication
+     * @param key The identifier of the required nanopublication
      * @param request
      * @param response required to set HTTP response status
      * @return a Nanopub object
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, consumes = {})
+    @RequestMapping(value = "/{key}", method = RequestMethod.GET, consumes = {}, produces = "application/x-trig")
     @ApiOperation("Retrieves a single nanopub")
     public @ResponseBody
-    Nanopub retrieveNanopub(
+    String retrieveNanopub(
             @ApiParam(required = true,
                     value = "The identifier of the required nanopublication")
-            @PathVariable final String id,
+            @PathVariable final String key,
             final HttpServletRequest request,
             final HttpServletResponse response) {
         
-        logger.debug("retrieving nanopublication with id '{}'", id);
+        logger.debug("retrieving nanopublication with key '{}'", key);
         
         return fetchNanopub(response, request.getRequestURL().toString());
     }
     
     
-    private Nanopub fetchNanopub(final HttpServletResponse response, 
+    private String fetchNanopub(final HttpServletResponse response, 
             final String url) {
-    	
-        Nanopub result = null;      
-		
-        try {			
+    	String result = null;
+    			
+        try {
             URI uri = new URIImpl(url);			
-            result = this.nanopubDao.retrieveNanopub(uri);			
+            Nanopub nanopub = this.nanopubDao.retrieveNanopub(uri);			
 			
-            if (result == null)	{				
+            if (nanopub == null)	{				
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
             }
+            else {
+		        ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();  
+		        NanopubUtils.writeToStream(nanopub, npOutStream, RDFFormat.TRIG);			
+	            result = new String(npOutStream.toByteArray(), "UTF-8");            
+	            response.setHeader("Content-Type", RDFFormat.TRIG.toString());
+			}
 		
-        } catch (NanopubDaoException e) {            
+        } catch (NanopubDaoException | RDFHandlerException | UnsupportedEncodingException e) {            
             logger.warn("Could not retrieve nanopub", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		
-        } catch (IllegalArgumentException e) {
-            logger.warn("Invalid nanopub URI", e);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		
-        }	     
+            result = "\n" + e.getMessage();            
+        }
         
-        return result;    
+        return result;
     }
 }

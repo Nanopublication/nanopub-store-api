@@ -2,8 +2,8 @@ package nl.lumc.nanopub.store.api;
 
 
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
-import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NOBASE_NANOPUB_NAME;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -131,11 +131,11 @@ public class NanopubControllerTest {
     
     @Test
 	public void testListOneNanopub() throws Exception {
-    	List<URI> expectedResponse = Arrays.asList((URI)new URIImpl(EXAMPLE_NANOPUB_URI));
+    	List<URI> expectedResponse = Arrays.asList((URI)new URIImpl(EXAMPLE_STORED_URI));
     	
     	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);
     	
-		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_NANOPUB_URI + "\"]"));
+		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_STORED_URI + "\"]"));
 	}
     
     
