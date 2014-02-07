@@ -148,7 +148,7 @@ public class NanopubControllerIntegrationTest {
     	
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
-        request.setServerPort(80);
+        request.setServerPort(8080);
         request.setRequestURI("/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
         request.setContextPath("/nanopub-store-api");
         
