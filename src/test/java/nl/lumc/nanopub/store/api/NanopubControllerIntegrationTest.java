@@ -6,7 +6,6 @@
 
 package nl.lumc.nanopub.store.api;
 
-import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
@@ -14,12 +13,10 @@ import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.getNanopu
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
@@ -42,7 +39,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+
 
 import javax.servlet.http.HttpServletResponse;
 
