@@ -1,49 +1,42 @@
 package nl.lumc.nanopub.store.api;
 
-
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NOBASE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
-import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
-import nl.lumc.nanopub.store.dao.NanopubDaoException;
 import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
-import org.openrdf.OpenRDFException;
+import org.nanopub.NanopubUtils;
+import org.openrdf.model.Model;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.util.ModelUtil;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.Rio;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.AssertThrows;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-
 
 /**
  *
@@ -141,18 +134,32 @@ public class NanopubControllerTest {
     
     @Test
 	public void testRetrieveNanopubURLMapping() throws Exception {
-		fail();
+        Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+        when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
+        
+		this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key")).andExpect(status().isOk());
 	}
     
     
     @Test
 	public void testRetrieveNanopubInvalidURI() throws Exception {
-		fail();
+		this.mockMvc.perform(get("/nanopubs/non-existant-integrity-key")).andExpect(status().isNotFound());
     }
     
     
     @Test
 	public void testRetrieveNanopub() throws Exception {
-		fail();
-	}
+    	Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+    	when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
+
+    	String body = this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key"))
+    			.andExpect(status().isOk())
+    			.andExpect(content().contentType("application/x-trig"))
+    			.andReturn().getResponse().getContentAsString();
+
+    	InputStream isActual = new ByteArrayInputStream(body.getBytes());
+    	Model modelActual = Rio.parse(isActual, "", RDFFormat.TRIG);
+
+    	assertTrue( ModelUtil.equals(modelActual, NanopubUtils.getStatements(np)) );
+    }
 }
