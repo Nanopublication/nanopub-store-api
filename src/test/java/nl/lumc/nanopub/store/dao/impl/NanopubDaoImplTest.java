@@ -15,6 +15,7 @@ import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_NANOPUB_NAME;
 
 import org.junit.After;
 import org.junit.Before;
@@ -97,7 +98,7 @@ public class NanopubDaoImplTest {
 	@Test
 	public void testRetrieveNanopub() throws Exception {
 
-		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_STORED_NANOPUB_NAME);
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
 
@@ -112,7 +113,7 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test
 	public void testHasNanopub() throws Exception {
-		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_STORED_NANOPUB_NAME);
 
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
@@ -133,7 +134,7 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test
 	public void testListOneNanopub() throws Exception {
-		addNanopub(this.repository, EXAMPLE_NANOPUB_NAME);
+		addNanopub(this.repository, EXAMPLE_STORED_NANOPUB_NAME);
 
 		List<URI> list = this.dao.listNanopubs();
 
