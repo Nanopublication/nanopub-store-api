@@ -3,12 +3,15 @@ package nl.lumc.nanopub.store.api;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_NOBASE_NANOPUB_NAME;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,9 +25,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nanopub.Nanopub;
+import org.nanopub.NanopubUtils;
+import org.openrdf.model.Model;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.util.ModelUtil;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.Rio;
 import org.springframework.http.MediaType;
+import org.springframework.test.AssertThrows;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -140,14 +149,17 @@ public class NanopubControllerTest {
     
     @Test
 	public void testRetrieveNanopub() throws Exception {
-        Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
-        when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
-        
-        String npString = NanopublicationFileOperation.getNanopubAsString(EXAMPLE_NANOPUB_NAME);
-        
-        this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/x-trig"))
-                .andExpect(content().string(npString));
-	}
+    	Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+    	when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
+
+    	String body = this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key"))
+    			.andExpect(status().isOk())
+    			.andExpect(content().contentType("application/x-trig"))
+    			.andReturn().getResponse().getContentAsString();
+
+    	InputStream isActual = new ByteArrayInputStream(body.getBytes());
+    	Model modelActual = Rio.parse(isActual, "", RDFFormat.TRIG);
+
+    	assertTrue( ModelUtil.equals(modelActual, NanopubUtils.getStatements(np)) );
+    }
 }
