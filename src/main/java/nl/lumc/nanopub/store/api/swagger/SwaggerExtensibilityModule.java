@@ -10,6 +10,18 @@ import com.mangofactory.swagger.configuration.ExtensibilityModule;
 import com.mangofactory.swagger.models.AlternateTypeProcessingRule;
 import com.mangofactory.swagger.models.TypeProcessingRule;
 
+/**
+ * 
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
+ * 
+ * @since 10-10-2013
+ * @version 0.1 
+ */
+
 @Component("extensibilityModule")
 public class SwaggerExtensibilityModule extends ExtensibilityModule {
 	@Override

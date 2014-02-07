@@ -27,7 +27,12 @@ import org.openrdf.rio.RDFFormat;
 
 /**
  *
- * @author Rajaram, Eelke, Mark, Reinout
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
+ * 
  * @serial 05-11-2013
  * @version 0.2
  */
