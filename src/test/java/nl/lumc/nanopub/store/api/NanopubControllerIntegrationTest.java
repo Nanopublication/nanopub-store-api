@@ -148,9 +148,9 @@ public class NanopubControllerIntegrationTest {
     	
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
-        request.setRemotePort(8080);
-        request.setParameter("key", "RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
-        request.setRequestURI("/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
+        request.setServerPort(8080);
+        request.setRequestURI("/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
+        request.setContextPath("/nanopub-store-api");
         
         MockHttpServletResponse response = new MockHttpServletResponse();       
        
@@ -164,6 +164,7 @@ public class NanopubControllerIntegrationTest {
         InputStream isActual = new ByteArrayInputStream(result.getBytes());
         Model modelActual = Rio.parse(isActual, "", RDFFormat.TRIG);
 
+//        System.out.println("\nresult: " + result);
         assertTrue(ModelUtil.equals(modelExpected, modelActual));
 	}
     
