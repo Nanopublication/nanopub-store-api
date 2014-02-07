@@ -214,7 +214,11 @@ public class NanopubController {
         
         logger.debug("retrieving nanopublication with key '{}'", key);
         
-        return fetchNanopub(response, request.getRequestURL().toString());
+        String url = request.getRequestURL().toString();
+        
+        String nanopubString = fetchNanopub(response, url);
+        
+        return nanopubString;
     }
     
     

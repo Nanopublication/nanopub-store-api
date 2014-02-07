@@ -36,7 +36,7 @@ public class NanopublicationFileOperation {
     private static final org.slf4j.Logger LOGGER
             = getLogger(NanopublicationFileOperation.class);
 	public static final String EXAMPLE_STORED_URI = 
-			"http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc";
+			"http://localhost:80/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc";
 	public static final String EXAMPLE_NANOPUB_NAME = "example";
 	public static final String EXAMPLE_STORED_NANOPUB_NAME 
 	= "example_stored";
