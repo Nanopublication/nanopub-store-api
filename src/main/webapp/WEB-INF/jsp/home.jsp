@@ -13,9 +13,8 @@
   <script src='lib/handlebars-1.0.0.js' type='text/javascript'></script>
   <script src='lib/underscore-min.js' type='text/javascript'></script>
   <script src='lib/backbone-min.js' type='text/javascript'></script>
-  <!-- for debugging: <script src='lib/swagger.js' type='text/javascript'></script> -->
-  <script src='lib/swagger.min.js' type='text/javascript'></script>
-  <script src='swagger-ui.js' type='text/javascript'></script>
+  <script src='lib/swagger.js' type='text/javascript'></script>
+  <script src='swagger-ui.min.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
   <script type="text/javascript">
     $(function () {
