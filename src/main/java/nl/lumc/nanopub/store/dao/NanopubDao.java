@@ -7,7 +7,12 @@ import org.nanopub.Nanopub;
 
 /**
  * 
- * @author Eelke, Mark, Reinout, Rajaram
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
+ * 
  * @since 30-10-2013
  * @version 0.1
  */

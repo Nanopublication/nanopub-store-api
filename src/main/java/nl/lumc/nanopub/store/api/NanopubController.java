@@ -48,9 +48,13 @@ import org.openrdf.model.Model;
 
 /**
  *
- * @author Eelke, Mark, Reinout, Rajaram
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
  * 
- * @since 05-11-2013
+ * @since 10-10-2013
  * @version 0.2
  */
 @Controller

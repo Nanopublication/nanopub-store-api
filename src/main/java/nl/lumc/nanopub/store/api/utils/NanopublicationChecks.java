@@ -37,10 +37,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *
- * @author Rajaram Kaliyaperumal
- * @author Mark Thompson
  * @author Eelke van der Horst
+ * @author Mark Thompson 
  * @author Kees Burger
+ * @author Rajaram Kaliyaperumal 
  * 
  * @since 05-02-2014
  * @version 0.1

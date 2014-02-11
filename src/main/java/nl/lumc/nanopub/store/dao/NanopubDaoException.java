@@ -1,5 +1,17 @@
 package nl.lumc.nanopub.store.dao;
 
+/**
+ * 
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
+ * 
+ * @since 31-10-2013
+ * @version 0.1
+ */
+
 public class NanopubDaoException extends Exception {
 	/**
 	 * 

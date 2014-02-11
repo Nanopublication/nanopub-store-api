@@ -22,6 +22,17 @@ import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
 
+/**
+ * 
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
+ * 
+ * @since 30-10-2013
+ * @version 0.1
+ */
 
 public class NanopubDaoImpl implements NanopubDao {
 	

@@ -40,7 +40,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
- * @author Reinout, Rajaram, Eelke, Mark
+ * @author Eelke van der Horst
+ * @author Mark Thompson 
+ * @author Kees Burger
+ * @author Rajaram Kaliyaperumal
+ * @author Reinout van Schouwen
+ * 
  * @since 25-10-2013
  * @version 0.3
  */
