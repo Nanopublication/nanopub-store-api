@@ -13,7 +13,8 @@
   <script src='lib/handlebars-1.0.0.js' type='text/javascript'></script>
   <script src='lib/underscore-min.js' type='text/javascript'></script>
   <script src='lib/backbone-min.js' type='text/javascript'></script>
-  <script src='lib/swagger.js' type='text/javascript'></script>
+  <!-- for debugging: <script src='lib/swagger.js' type='text/javascript'></script> -->
+  <script src='lib/swagger.min.js' type='text/javascript'></script>
   <script src='swagger-ui.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
   <script type="text/javascript">
@@ -27,6 +28,12 @@
           console.log("Loaded SwaggerUI")
         }
         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+		// Following is needed until next version of swagger-springmvc includes description of response type
+		//  see: http://localhost:8080/nanopub-store-api//api-docs/nanopubs
+        $repl = "application/x-trig";  
+    	$("li[id^='nanopubs_storeNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
+    	$("li[id^='nanopubs_retrieveNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
+
       },
       onFailure: function(data) {
         if(console) {
@@ -44,10 +51,10 @@
         console.log("added key " + key);
         window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
       }
-    })
+    });
     window.swaggerUi.load();
-  });
 
+  });
   </script>
 </head>
 
@@ -77,7 +84,6 @@
 <div id="swagger-ui-container" class="swagger-ui-wrap">
 
 </div>
-
 </body>
 
 </html>

@@ -18,7 +18,7 @@
         <junit.version>4.11</junit.version>
         <com.jayway.restassured.version>1.8.1</com.jayway.restassured.version>
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
-        <com.mangofactory.swagger-springmvc.version>0.6.4</com.mangofactory.swagger-springmvc.version>
+        <com.mangofactory.swagger-springmvc.version>0.6.6</com.mangofactory.swagger-springmvc.version>
         <com.jayway.json-path.version>0.9.0</com.jayway.json-path.version>
 		
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
@@ -66,11 +66,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>16.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
             <version>${com.mangofactory.swagger-springmvc.version}</version>
@@ -83,8 +78,17 @@
                     <artifactId>jackson-core</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>16.0</version>
+	</dependency>
 		
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -130,6 +134,12 @@
             <groupId>org.nanopub</groupId>
             <artifactId>nanopub</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion> <!-- collections transitively included from nanopub-java, clashes with swagger (getFirst method not found..) -->
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
@@ -145,6 +155,11 @@
         	<groupId>ch.tkuhn</groupId>
         	<artifactId>hashuri</artifactId>
         	<version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.openrdf.sesame</groupId>
+        	<artifactId>sesame-sail-nativerdf</artifactId>
+        	<version>2.7.8</version>
         </dependency>
     </dependencies>
     <build>
