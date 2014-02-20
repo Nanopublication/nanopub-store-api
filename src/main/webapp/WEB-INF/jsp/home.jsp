@@ -32,7 +32,7 @@
         $repl = "application/x-trig";  
     	$("li[id^='nanopubs_storeNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
     	$("li[id^='nanopubs_retrieveNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
-
+    	$("li[id^='nanopubs_storeNanopub'] div[class='parameter-content-type'] option" ).attr('value',$repl).html($repl);
       },
       onFailure: function(data) {
         if(console) {
