@@ -94,7 +94,7 @@ public class NanopublicationChecks {
         }
 
         hasPublicationDate = rdfGraph.contains(null, 
-                NanopubConstant.PUBLISHED_ON_PREDICATE, null, pubInfoContext);
+                NanopubConstants.PUBLISHED_ON_PREDICATE, null, pubInfoContext);
        
         
         return hasPublicationDate;        
@@ -132,7 +132,7 @@ public class NanopublicationChecks {
                     XMLSchema.DATETIME);	                
 	        
             Statement statement = new ContextStatementImpl(npContext, 
-                    NanopubConstant.PUBLISHED_ON_PREDICATE, object, 
+                    NanopubConstants.PUBLISHED_ON_PREDICATE, object, 
                     pubInfoContext);	        
             rdfGraph.add(statement);
 	      

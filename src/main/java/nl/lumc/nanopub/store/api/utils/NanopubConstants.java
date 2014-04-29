@@ -19,7 +19,7 @@ import org.openrdf.model.impl.URIImpl;
  * @since 29-04-2014
  * @version 0.1
  */
-public class NanopubConstant {
+public class NanopubConstants {
     
     public static final URI PUBLISHED_ON_PREDICATE = new URIImpl
         ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
