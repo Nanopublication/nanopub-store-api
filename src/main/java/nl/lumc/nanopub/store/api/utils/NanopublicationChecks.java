@@ -85,10 +85,17 @@ public class NanopublicationChecks {
      */
     public static boolean isNanopubPublished (Model rdfGraph) {
         boolean hasPublicationDate = false;
-        URI publishedPredicate = new URIImpl
-        ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
+        URI pubInfoContext = null;
+        try {
+            pubInfoContext = GraphUtil.getUniqueObjectURI(rdfGraph, null, 
+                    Nanopub.HAS_PUBINFO_URI);
+        } catch (GraphUtilException ex) {
+           logger.warn("Could not get nanopub publicationInfo graph URI", ex);
+        }
 
-        hasPublicationDate = rdfGraph.contains(null, publishedPredicate, null);
+        hasPublicationDate = rdfGraph.contains(null, 
+                NanopubConstant.PUBLISHED_ON_PREDICATE, null, pubInfoContext);
+       
         
         return hasPublicationDate;        
     }
@@ -110,9 +117,7 @@ public class NanopublicationChecks {
 			
             XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().
                     newXMLGregorianCalendar(c);
-	    	        
-            URI publishedOn = new URIImpl("http://swan.mindinformatics.org/"
-                    + "ontologies/1.2/pav/publishedOn");
+            
             URI pubInfoContext = null;
             URI npContext = null;
             try {
@@ -126,8 +131,9 @@ public class NanopublicationChecks {
             Literal object = new LiteralImpl(xmlDate.toXMLFormat(), 
                     XMLSchema.DATETIME);	                
 	        
-            Statement statement = new ContextStatementImpl(npContext, publishedOn, 
-                    object, pubInfoContext);	        
+            Statement statement = new ContextStatementImpl(npContext, 
+                    NanopubConstant.PUBLISHED_ON_PREDICATE, object, 
+                    pubInfoContext);	        
             rdfGraph.add(statement);
 	      
         } catch (DatatypeConfigurationException e) {            
