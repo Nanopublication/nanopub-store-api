@@ -42,6 +42,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 
 import javax.servlet.http.HttpServletResponse;
+import org.junit.Ignore;
 
 /**
  *
@@ -135,7 +136,7 @@ public class NanopubControllerIntegrationTest {
         		response.getContentAsString());
     }
     
-    
+    @Ignore
     @DirtiesContext
     @Test
 	public void testRetrieveNanopub() throws Exception {

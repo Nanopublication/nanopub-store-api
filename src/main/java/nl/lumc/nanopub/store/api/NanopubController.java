@@ -40,11 +40,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import java.util.logging.Level;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 import org.openrdf.model.Model;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -55,10 +58,11 @@ import org.openrdf.model.Model;
  * @author Reinout van Schouwen
  * 
  * @since 10-10-2013
- * @version 0.2
+ * @version 0.3
  */
 @Controller
 @RequestMapping("/nanopubs")
+@Api(value = "nanopubs",description = "nanopubs")
 public class NanopubController {    
 
     private static final Logger logger
@@ -79,7 +83,7 @@ public class NanopubController {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/x-trig", produces = "application/x-trig")
-    @ApiOperation("Stores a nanopublication")
+    @ApiOperation(value= "Stores a nanopublication")
     public @ResponseBody
     String storeNanopub(
             //@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
@@ -170,8 +174,9 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return a List of URIs.
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    @ApiOperation("Retrieves a list of all nanopub URIs in the store.")    
+    @RequestMapping(value = "", method = RequestMethod.GET, 
+            produces = "application/json")
+    @ApiOperation(value = "Retrieves a list of all nanopub URIs in the store.")    
     public @ResponseBody List<String> listNanopubs(final HttpServletResponse response) {        
         List<String> list = new ArrayList<>();
  		
@@ -206,8 +211,11 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return a Nanopub object
      */
-    @RequestMapping(value = "/{key}", method = RequestMethod.GET, consumes = {}, produces = "application/x-trig")
-    @ApiOperation("Retrieves a single nanopub")
+    @RequestMapping(value = "/{key}", method = RequestMethod.GET, consumes = {}
+            )
+    @ApiOperation(value="Retrieves a single nanopub"
+            ,produces = ("application/x-trig, application/n-quads")
+    )
     public @ResponseBody
     String retrieveNanopub(
             @ApiParam(required = true,
@@ -218,16 +226,17 @@ public class NanopubController {
         
         logger.debug("retrieving nanopublication with key '{}'", key);
         
-        String url = request.getRequestURL().toString();
+        String url = request.getRequestURL().toString();       
+        String contentType = request.getHeader("accept");
         
-        String nanopubString = fetchNanopub(response, url);
+        String nanopubString = fetchNanopub(response, url, contentType);
         
         return nanopubString;
     }
     
     
     private String fetchNanopub(final HttpServletResponse response, 
-            final String url) {
+            final String url, final String contentType) {
     	String result = null;
     			
         try {
@@ -238,11 +247,19 @@ public class NanopubController {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
             }
             else {
-		        ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();  
-		        NanopubUtils.writeToStream(nanopub, npOutStream, RDFFormat.TRIG);			
-	            result = new String(npOutStream.toByteArray(), "UTF-8");            
-	            response.setHeader("Content-Type", RDFFormat.TRIG.toString());
-			}
+		        
+                ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();                         
+                if (contentType.contentEquals("application/x-trig")) {                            
+                    NanopubUtils.writeToStream(nanopub, npOutStream, RDFFormat.TRIG);                            
+                    response.setHeader("Content-Type", RDFFormat.TRIG.toString());                        
+                }                        
+                else if (contentType.contentEquals("application/n-quads")) {                            
+                    NanopubUtils.writeToStream(nanopub, npOutStream, RDFFormat.NQUADS);                            
+                    response.setHeader("Content-Type", RDFFormat.NQUADS.toString());                        
+                }	            
+                        
+                result = new String(npOutStream.toByteArray(), "UTF-8");
+            }
 		
         } catch (NanopubDaoException | RDFHandlerException | UnsupportedEncodingException e) {            
             logger.warn("Could not retrieve nanopub", e);
@@ -251,5 +268,7 @@ public class NanopubController {
         }
         
         return result;
-    }
+    }   
+    
+    
 }

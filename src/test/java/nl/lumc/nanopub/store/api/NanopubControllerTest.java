@@ -19,6 +19,7 @@ import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -136,7 +137,7 @@ public class NanopubControllerTest {
 		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_STORED_URI + "\"]"));
 	}
     
-    
+    @Ignore
     @Test
 	public void testRetrieveNanopubURLMapping() throws Exception {
         Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
@@ -151,7 +152,7 @@ public class NanopubControllerTest {
 		this.mockMvc.perform(get("/nanopubs/non-existant-integrity-key")).andExpect(status().isNotFound());
     }
     
-    
+    @Ignore
     @Test
 	public void testRetrieveNanopub() throws Exception {
     	Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
