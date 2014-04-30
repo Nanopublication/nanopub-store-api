@@ -69,5 +69,5 @@
 		Swagger object. Uses the ExtensibilityModule and the swagger properties to generate the
 		documentation at runtime.
 	-->
-	<bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig" />
+	<!-- <bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig" /> -->
 </beans>

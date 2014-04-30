@@ -26,13 +26,13 @@
         if(console) {
           console.log("Loaded SwaggerUI")
         }
-        $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+        //$('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 		// Following is needed until next version of swagger-springmvc includes description of response type
 		//  see: http://localhost:8080/nanopub-store-api//api-docs/nanopubs
-        $repl = "application/x-trig";  
-    	$("li[id^='nanopubs_storeNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
-    	$("li[id^='nanopubs_retrieveNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
-    	$("li[id^='nanopubs_storeNanopub'] div[class='parameter-content-type'] option" ).attr('value',$repl).html($repl);
+        //$repl = "application/x-trig";  
+    	//$("li[id^='nanopubs_storeNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
+    	//$("li[id^='nanopubs_retrieveNanopub'] div[class='response-content-type'] option" ).attr('value',$repl).html($repl);
+    	//$("li[id^='nanopubs_storeNanopub'] div[class='parameter-content-type'] option" ).attr('value',$repl).html($repl);
       },
       onFailure: function(data) {
         if(console) {
