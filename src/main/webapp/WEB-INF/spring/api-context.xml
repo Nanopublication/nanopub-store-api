@@ -64,6 +64,13 @@
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
+        
+        <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+            <!-- setting maximum upload size -->
+            <!-- The value ~ 1MB -->
+            <property name="maxUploadSize" value="1100000" />
+        </bean>
 	
 	<!--
 		Swagger object. Uses the ExtensibilityModule and the swagger properties to generate the

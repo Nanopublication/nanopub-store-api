@@ -1,6 +1,8 @@
 package nl.lumc.nanopub.store.api;
 
 import ch.tkuhn.hashuri.rdf.TransformNanopub;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Files;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayOutputStream;
@@ -43,11 +45,16 @@ import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 import org.openrdf.model.Model;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+import java.nio.charset.Charset;
+import org.apache.commons.io.Charsets;
 
 /**
  *
@@ -93,76 +100,8 @@ public class NanopubController {
             final HttpServletRequest request,
             final HttpServletResponse response) {        
         
-    	String contentType = request.getHeader("Content-Type");
-    	
-        if(contentType != null && ! contentType.contains("application/x-trig")) {			
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            response.setHeader("Content-Type", "text/plain");           
-            return("Currently only application/x-trig is supported");        
-        }
+    	String nanopubStr = storeStringNanopub (nanopub,request,response);
         
-        Nanopub npHashed;
-        
-        try {
-
-            String baseUri = request.getRequestURL().toString();
-            if (!baseUri.endsWith("/"))
-            {
-            	baseUri += "/";
-            }
-            
-            Nanopub npSyntaxCheck = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
-
-            
-            Model rdfGraph = NanopublicationChecks.toRDFGraph(nanopub, baseUri, RDFFormat.TRIG);
-            
-            if(NanopublicationChecks.isNanopubPublished(rdfGraph)) {			
-                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-                response.setHeader("Content-Type", "text/plain");
-                return("Could not store nanopub. "
-                        + "This nanopublication is already published");
-            }
-            
-            // Adding published time stamp to the nanopublication
-            NanopublicationChecks.addTimeStamp(rdfGraph);
-            Nanopub np = new NanopubImpl(rdfGraph);
-            // Hashed nanopublication
-            npHashed = TransformNanopub.transform(np, np.getUri().toString());            
-            nanopubDao.storeNanopub(npHashed);  
-            
-        } catch (NanopubDaoException | MalformedNanopubException | 
-                OpenRDFException | IOException e) {           
-            logger.warn("Could not store nanopub", e);
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            response.setHeader("Content-Type", "text/plain");
-            return "Could not store nanopub\n" + e.getMessage();
-        }
-        
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        response.setHeader("Location", npHashed.getUri().toString());
-        
-//        try {
-//			NanopubUtils.writeToStream(npHashed, response.getOutputStream(), RDFFormat.TRIG);
-//			response.getOutputStream().flush();
-//		} catch (RDFHandlerException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-        
-        ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();        
-        String nanopubStr = "";
-        
-        try {			
-            NanopubUtils.writeToStream(npHashed, npOutStream, RDFFormat.TRIG);			
-            nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");            
-            response.setHeader("Content-Type", RDFFormat.TRIG.toString());
-        } catch (RDFHandlerException | UnsupportedEncodingException e) {
-            nanopubStr = "\n"+e.getMessage();
-			
-        }
         return nanopubStr;
     }
 
@@ -268,7 +207,119 @@ public class NanopubController {
         }
         
         return result;
-    }   
+    }
+    
+    @ApiIgnore
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, 
+             produces = "application/x-trig")
+    @ApiOperation(value= "Stores a nanopublication")
+    public @ResponseBody
+    String storeNanopub(
+            //@RequestHeader(value = "Content-Type") String contentType, // needs to be removed from Swagger api
+            // Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
+            @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
+            @RequestBody MultipartFile file,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
+        
+        
+        
+        String nanopubStr = null;
+        try {            
+           
+            //String fileContent = Files.toString(file, Charsets.UTF_8));
+            String fileContent = CharStreams.toString(new InputStreamReader(file.getInputStream(), Charsets.UTF_8));
+            nanopubStr = storeStringNanopub (fileContent,request,response);
+        } catch (IOException ex) {
+            logger.warn("Could not store nanopub", ex);
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");
+            
+        }
+        
+        
+        return nanopubStr;
+        
+}
+    
+    
+    private String storeStringNanopub (final String nanopub,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
+    
+        String contentType = request.getHeader("Content-Type");
+    	
+        if(contentType != null && ! contentType.contains("application/x-trig")) {			
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");           
+            return("Currently only application/x-trig is supported");        
+        }
+        
+        Nanopub npHashed;
+        
+        try {
+
+            String baseUri = request.getRequestURL().toString();
+            if (!baseUri.endsWith("/"))
+            {
+            	baseUri += "/";
+            }
+            
+            Nanopub npSyntaxCheck = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
+
+            
+            Model rdfGraph = NanopublicationChecks.toRDFGraph(nanopub, baseUri, RDFFormat.TRIG);
+            
+            if(NanopublicationChecks.isNanopubPublished(rdfGraph)) {			
+                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                response.setHeader("Content-Type", "text/plain");
+                return("Could not store nanopub. "
+                        + "This nanopublication is already published");
+            }
+            
+            // Adding published time stamp to the nanopublication
+            NanopublicationChecks.addTimeStamp(rdfGraph);
+            Nanopub np = new NanopubImpl(rdfGraph);
+            // Hashed nanopublication
+            npHashed = TransformNanopub.transform(np, np.getUri().toString());            
+            nanopubDao.storeNanopub(npHashed);  
+            
+        } catch (NanopubDaoException | MalformedNanopubException | 
+                OpenRDFException | IOException e) {           
+            logger.warn("Could not store nanopub", e);
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");
+            return "Could not store nanopub\n" + e.getMessage();
+        }
+        
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setHeader("Location", npHashed.getUri().toString());
+        
+//        try {
+//			NanopubUtils.writeToStream(npHashed, response.getOutputStream(), RDFFormat.TRIG);
+//			response.getOutputStream().flush();
+//		} catch (RDFHandlerException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+        
+        ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();        
+        String nanopubStr = "";
+        
+        try {			
+            NanopubUtils.writeToStream(npHashed, npOutStream, RDFFormat.TRIG);			
+            nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");            
+            response.setHeader("Content-Type", RDFFormat.TRIG.toString());
+        } catch (RDFHandlerException | UnsupportedEncodingException e) {
+            nanopubStr = "\n"+e.getMessage();
+			
+        }
+        return nanopubStr;
+    }
+   
     
     
 }
