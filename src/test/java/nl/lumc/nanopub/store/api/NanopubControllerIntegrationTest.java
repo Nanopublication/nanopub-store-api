@@ -136,7 +136,6 @@ public class NanopubControllerIntegrationTest {
         		response.getContentAsString());
     }
     
-    @Ignore
     @DirtiesContext
     @Test
 	public void testRetrieveNanopub() throws Exception {
@@ -149,6 +148,7 @@ public class NanopubControllerIntegrationTest {
         request.setServerPort(8080);
         request.setRequestURI("/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc");
         request.setContextPath("/nanopub-store-api");
+        request.addHeader("accept", "application/x-trig");
         
         MockHttpServletResponse response = new MockHttpServletResponse();       
        

@@ -135,15 +135,15 @@ public class NanopubControllerTest {
     	when(nanopubDao.listNanopubs()).thenReturn(expectedResponse);
     	
 		this.mockMvc.perform(get("/nanopubs")).andExpect(status().isOk()).andExpect(content().string("[\"" + EXAMPLE_STORED_URI + "\"]"));
-	}
+	}    
     
-    @Ignore
     @Test
 	public void testRetrieveNanopubURLMapping() throws Exception {
         Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
         when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
         
-		this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key")).andExpect(status().isOk());
+		this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key").
+                        header("accept", "application/x-trig")).andExpect(status().isOk());
 	}
     
     
@@ -152,13 +152,14 @@ public class NanopubControllerTest {
 		this.mockMvc.perform(get("/nanopubs/non-existant-integrity-key")).andExpect(status().isNotFound());
     }
     
-    @Ignore
     @Test
 	public void testRetrieveNanopub() throws Exception {
     	Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
     	when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
 
-    	String body = this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key"))
+    	String body = this.mockMvc.perform(get
+        ("/nanopubs/" + "some-integrity-key").
+                header("accept", "application/x-trig"))
     			.andExpect(status().isOk())
     			.andExpect(content().contentType("application/x-trig"))
     			.andReturn().getResponse().getContentAsString();
