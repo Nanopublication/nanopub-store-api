@@ -1,6 +1,7 @@
 package nl.lumc.nanopub.store.dao.impl;
 
 import static org.nanopub.NanopubUtils.propagateToHandler;
+import static nl.lumc.nanopub.store.api.utils.NanopubStoreConstants.STORE_MAPPING_CONTEXT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,13 @@ import nl.lumc.nanopub.store.dao.NanopubDaoException;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.vocabulary.DC;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -52,10 +57,11 @@ public class NanopubDaoImpl implements NanopubDao {
 	 * when there is an error storing the nanopublication in the underlying store.
 	 */
 	@Override
-	public URI storeNanopub(Nanopub nanopub) throws NanopubDaoException {
-		URI result = nanopub.getUri();
+	public String storeNanopub(Nanopub nanopub) throws NanopubDaoException {
+		String key = nanopub.getUri().getLocalName();                
+                URI nanopubUri = nanopub.getUri();
 		
-		if (hasNanopub(result))
+		if (hasNanopub(key))
 		{
 			throw new NanopubDaoException("Nanopub (URI) already exists!"); 
 		}
@@ -66,6 +72,7 @@ public class NanopubDaoImpl implements NanopubDao {
 			connection = this.repository.getConnection();
 			RDFHandler handler = new RDFInserter(connection);
 			propagateToHandler(nanopub, handler);
+                        storeMappingStatement(nanopubUri, key); 
 		} catch (RepositoryException | RDFHandlerException e) {
 			throw new NanopubDaoException("Error storing nanopublication!", e);
 		}
@@ -81,15 +88,17 @@ public class NanopubDaoImpl implements NanopubDao {
 			}
 		}
 		
-		return result;
+		return key;
 	}
 	
 
 	@Override
-	public Nanopub retrieveNanopub(URI uri) throws NanopubDaoException {
+	public Nanopub retrieveNanopub(String key) throws NanopubDaoException {
 		Nanopub nanopub = null;
+                
+                URI uri = retrieveNanopubURI(key);
 		
-		if (hasNanopub(uri))
+		if (hasNanopub(key))
 		{
 			try {
 				nanopub = new NanopubImpl(this.repository, uri);
@@ -103,13 +112,16 @@ public class NanopubDaoImpl implements NanopubDao {
 	
 
 	@Override
-	public boolean hasNanopub(URI uri) throws NanopubDaoException {
+	public boolean hasNanopub(String key) throws NanopubDaoException {
 		boolean result = false;
 		RepositoryConnection connection = null;
+                Literal object = new LiteralImpl(key, XMLSchema.STRING);
+                
 		
 		try {
 			connection = this.repository.getConnection();
-			result = connection.hasStatement(uri, RDF.TYPE, Nanopub.NANOPUB_TYPE_URI, false, uri);
+			result = connection.hasStatement(null, DC.IDENTIFIER, object, false, STORE_MAPPING_CONTEXT);                        
+                        
 		}
 		catch (RepositoryException e)
 		{
@@ -138,15 +150,13 @@ public class NanopubDaoImpl implements NanopubDao {
 		
 		try {
 			connection = this.repository.getConnection();
-			RepositoryResult<Statement> resultSet = connection.getStatements(null, RDF.TYPE, Nanopub.NANOPUB_TYPE_URI, false);
+			RepositoryResult<Statement> resultSet = connection.getStatements(null, DC.IDENTIFIER, null, false, STORE_MAPPING_CONTEXT);
 			resultSet.enableDuplicateFilter();
 			
 			while (resultSet.hasNext())
 			{
-				Statement stmt = resultSet.next();
-				if (stmt.getSubject() == stmt.getContext()){
-					result.add((URI) stmt.getSubject());
-				}
+				Statement stmt = resultSet.next();					
+                                result.add((URI) stmt.getSubject());
 			}
 		}
 		catch (RepositoryException e)
@@ -166,6 +176,71 @@ public class NanopubDaoImpl implements NanopubDao {
 		}
 		
 		return result;
+	}
+        
+        
+	public void storeMappingStatement(URI nanopubUri, String key) throws NanopubDaoException {
+		
+		RepositoryConnection connection = null;
+		
+		try {
+                    
+                     Literal object = new LiteralImpl(key, XMLSchema.STRING); 
+        
+                     Statement statement = new StatementImpl(nanopubUri, 
+                             DC.IDENTIFIER, object);              
+			
+                     connection = this.repository.getConnection();		
+                     connection.add(statement, STORE_MAPPING_CONTEXT);
+                        
+		}
+		catch (RepositoryException e)
+		{
+			throw new NanopubDaoException("Error storing uri to key mapping statement", e);
+		}
+		finally
+		{
+			if (connection != null)
+			{
+				try {
+					connection.close();
+				} catch (RepositoryException e) {
+					throw new NanopubDaoException("Error closing connection (storing uri to key mapping statement)!", e);
+				}
+			}
+		}
+	}
+        
+        
+        private URI retrieveNanopubURI(String key) throws NanopubDaoException {
+            
+            URI nanopubURI = null;
+            RepositoryConnection connection = null;
+            Literal object = new LiteralImpl(key, XMLSchema.STRING);
+			
+                try {
+				
+                    connection = this.repository.getConnection();
+			
+                    RepositoryResult<Statement> result = connection.
+                            getStatements(null, DC.IDENTIFIER, object, 
+                                    true, STORE_MAPPING_CONTEXT);
+                    
+                    while (result.hasNext()) {
+                        
+                        Statement stm = result.next();
+                        nanopubURI = (URI)stm.getSubject();
+                        
+                    }
+			
+                } catch (RepositoryException e) {
+				
+                    throw new NanopubDaoException("Error retrieving nanopub uri", e);
+			
+                }
+		
+		
+		return nanopubURI;
 	}
 
 }

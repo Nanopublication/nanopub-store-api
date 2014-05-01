@@ -19,10 +19,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.nanopub.Nanopub;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Model;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.ContextStatementImpl;
 import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.util.GraphUtil;
 import org.openrdf.model.util.GraphUtilException;
@@ -94,7 +96,7 @@ public class NanopublicationChecks {
         }
 
         hasPublicationDate = rdfGraph.contains(null, 
-                NanopubConstants.PUBLISHED_ON_PREDICATE, null, pubInfoContext);
+                NanopubStoreConstants.PUBLISHED_ON_PREDICATE, null, pubInfoContext);
        
         
         return hasPublicationDate;        
@@ -132,7 +134,7 @@ public class NanopublicationChecks {
                     XMLSchema.DATETIME);	                
 	        
             Statement statement = new ContextStatementImpl(npContext, 
-                    NanopubConstants.PUBLISHED_ON_PREDICATE, object, 
+                    NanopubStoreConstants.PUBLISHED_ON_PREDICATE, object, 
                     pubInfoContext);	        
             rdfGraph.add(statement);
 	      
@@ -142,4 +144,6 @@ public class NanopublicationChecks {
 
         
     }
+    
+    
 }

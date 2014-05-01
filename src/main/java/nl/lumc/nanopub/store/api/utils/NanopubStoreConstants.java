@@ -6,8 +6,11 @@
 
 package nl.lumc.nanopub.store.api.utils;
 
+import java.util.Properties;
+import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -19,9 +22,21 @@ import org.openrdf.model.impl.URIImpl;
  * @since 29-04-2014
  * @version 0.1
  */
-public class NanopubConstants {
-    
+public class NanopubStoreConstants {    
+    /**
+     * <p>
+     * publishedOn predicate(from pav ontology).
+     * </p>
+     */
     public static final URI PUBLISHED_ON_PREDICATE = new URIImpl
         ("http://swan.mindinformatics.org/ontologies/1.2/pav/publishedOn");
+    
+    /**
+     * <p>
+     * Context for nanopubURi to key mapping triple. 
+     * </p>
+     */
+     public static final Resource STORE_MAPPING_CONTEXT = new URIImpl
+        ("http://rdf.biosemantics.org/nanopub-store-api/mappings");
     
 }

@@ -1,4 +1,4 @@
-@prefix : <http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc> .
+@prefix : <http://wwww.notmydomain.com/nanopubs/000001#> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 @prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
@@ -7,10 +7,10 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 
-@prefix data: <http://rdf.biosemantics.org/dataset/gene_disease_associations#> .
-@prefix textmining: <http://rdf.biosemantics.org/vocabularies/text_mining#> .
+@prefix data: <http://wwww.notourdomain.com/dataset/gene_disease_associations#> .
+@prefix textmining: <http://wwww.notourdomain.com/vocabularies/text_mining#> .
 
-@base <http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc> .
+@base <http://wwww.notmydomain.com/nanopubs/000001> .
 
 
 <> {

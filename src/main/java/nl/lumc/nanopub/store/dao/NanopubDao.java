@@ -4,6 +4,8 @@ import org.openrdf.model.URI;
 import java.util.List;
 
 import org.nanopub.Nanopub;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 
 /**
  * 
@@ -18,11 +20,11 @@ import org.nanopub.Nanopub;
  */
 public interface NanopubDao {	
 	
-	public URI storeNanopub(Nanopub nanopub) throws NanopubDaoException;
+	public String storeNanopub(Nanopub nanopub) throws NanopubDaoException;
 	
-	public Nanopub retrieveNanopub(URI uri) throws NanopubDaoException;
+	public Nanopub retrieveNanopub(String key) throws NanopubDaoException;
 	
-	public boolean hasNanopub(URI uri) throws NanopubDaoException;
+	public boolean hasNanopub(String key) throws NanopubDaoException;
 	
 	public List<URI> listNanopubs() throws NanopubDaoException;
 }

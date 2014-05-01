@@ -2,23 +2,18 @@ package nl.lumc.nanopub.store.api;
 
 import ch.tkuhn.hashuri.rdf.TransformNanopub;
 import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.lumc.nanopub.store.api.json.ResponseWrapper;
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
@@ -28,33 +23,27 @@ import org.nanopub.NanopubImpl;
 import org.nanopub.NanopubUtils;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import java.io.File;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
+import java.util.Properties;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 import org.openrdf.model.Model;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import java.nio.charset.Charset;
 import org.apache.commons.io.Charsets;
+import org.openrdf.model.Statement;
 
 /**
  *
@@ -165,22 +154,22 @@ public class NanopubController {
         
         logger.debug("retrieving nanopublication with key '{}'", key);
         
-        String url = request.getRequestURL().toString();       
+        //String url = request.getRequestURL().toString();       
         String contentType = request.getHeader("accept");
         
-        String nanopubString = fetchNanopub(response, url, contentType);
+        String nanopubString = fetchNanopub(response, key, contentType);
         
         return nanopubString;
     }
     
     
     private String fetchNanopub(final HttpServletResponse response, 
-            final String url, final String contentType) {
+            final String key, final String contentType) {
     	String result = null;
     			
         try {
-            URI uri = new URIImpl(url);			
-            Nanopub nanopub = this.nanopubDao.retrieveNanopub(uri);			
+            //URI uri = new URIImpl(url);			
+            Nanopub nanopub = this.nanopubDao.retrieveNanopub(key);			
 			
             if (nanopub == null)	{				
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
@@ -282,7 +271,8 @@ public class NanopubController {
             Nanopub np = new NanopubImpl(rdfGraph);
             // Hashed nanopublication
             npHashed = TransformNanopub.transform(np, np.getUri().toString());            
-            nanopubDao.storeNanopub(npHashed);  
+            String key = nanopubDao.storeNanopub(npHashed); 
+            logger.debug("nanopublication is stored with key '{}'", key);
             
         } catch (NanopubDaoException | MalformedNanopubException | 
                 OpenRDFException | IOException e) {           
