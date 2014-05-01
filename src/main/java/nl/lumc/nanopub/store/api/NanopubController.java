@@ -78,7 +78,9 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/x-trig", produces = "application/x-trig")
+    @RequestMapping(value = "", method = RequestMethod.POST, 
+            consumes = {"application/x-trig","application/n-quads"}, 
+            produces = {"application/x-trig","application/n-quads"})
     @ApiOperation(value= "Stores a nanopublication")
     public @ResponseBody
     String storeNanopub(
@@ -87,9 +89,23 @@ public class NanopubController {
             @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
             @RequestBody(required = true) String nanopub,
             final HttpServletRequest request,
-            final HttpServletResponse response) {        
+            final HttpServletResponse response) {     
         
-    	String nanopubStr = storeStringNanopub (nanopub,request,response);
+        String contentType = request.getHeader("Content-Type");
+        String nanopubStr = null;
+    	
+        
+        if(contentType.contains("application/x-trig")) {			
+            nanopubStr = storeStringNanopub (nanopub, RDFFormat.TRIG, request,response);        
+        }
+        else if(contentType.contains("application/n-quads")) {			
+            nanopubStr = storeStringNanopub (nanopub, RDFFormat.NQUADS, request,response);        
+        }
+        else{			
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");           
+            return("Currently only application/x-trig and application/n-quads are supported");        
+        }
         
         return nanopubStr;
     }
@@ -139,11 +155,10 @@ public class NanopubController {
      * @param response required to set HTTP response status
      * @return a Nanopub object
      */
-    @RequestMapping(value = "/{key}", method = RequestMethod.GET, consumes = {}
+    @RequestMapping(value = "/{key}", method = RequestMethod.GET, consumes = {},
+            produces = {"application/x-trig","application/n-quads"}
             )
-    @ApiOperation(value="Retrieves a single nanopub"
-            ,produces = ("application/x-trig, application/n-quads")
-    )
+    @ApiOperation(value="Retrieves a single nanopub")
     public @ResponseBody
     String retrieveNanopub(
             @ApiParam(required = true,
@@ -218,7 +233,7 @@ public class NanopubController {
            
             //String fileContent = Files.toString(file, Charsets.UTF_8));
             String fileContent = CharStreams.toString(new InputStreamReader(file.getInputStream(), Charsets.UTF_8));
-            nanopubStr = storeStringNanopub (fileContent,request,response);
+            //nanopubStr = storeStringNanopub (fileContent,request,response);
         } catch (IOException ex) {
             logger.warn("Could not store nanopub", ex);
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
@@ -232,17 +247,10 @@ public class NanopubController {
 }
     
     
-    private String storeStringNanopub (final String nanopub,
+    private String storeStringNanopub (final String nanopub, 
+            final RDFFormat format,
             final HttpServletRequest request,
-            final HttpServletResponse response) {
-    
-        String contentType = request.getHeader("Content-Type");
-    	
-        if(contentType != null && ! contentType.contains("application/x-trig")) {			
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            response.setHeader("Content-Type", "text/plain");           
-            return("Currently only application/x-trig is supported");        
-        }
+            final HttpServletResponse response) {    
         
         Nanopub npHashed;
         
@@ -254,10 +262,14 @@ public class NanopubController {
             	baseUri += "/";
             }
             
-            Nanopub npSyntaxCheck = new NanopubImpl(nanopub, RDFFormat.TRIG, baseUri);
+            Nanopub npSyntaxCheck = new NanopubImpl(nanopub, format, baseUri);
+            
+            String uriReplacenanopub = NanopublicationChecks.
+                    replaceNanopubGraphUri(nanopub, 
+                            npSyntaxCheck.getUri().toString(), baseUri);
 
             
-            Model rdfGraph = NanopublicationChecks.toRDFGraph(nanopub, baseUri, RDFFormat.TRIG);
+            Model rdfGraph = NanopublicationChecks.toRDFGraph(uriReplacenanopub, baseUri, format);
             
             if(NanopublicationChecks.isNanopubPublished(rdfGraph)) {			
                 response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
