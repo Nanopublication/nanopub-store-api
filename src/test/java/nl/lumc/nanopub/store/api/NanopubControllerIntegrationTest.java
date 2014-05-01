@@ -42,7 +42,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 
 import javax.servlet.http.HttpServletResponse;
-import org.junit.Ignore;
 
 /**
  *
@@ -81,7 +80,7 @@ public class NanopubControllerIntegrationTest {
         MockHttpServletRequest request;
         MockHttpServletResponse response; 
         
-        String nanopub = getNanopubAsString("example");        
+        String nanopub = getNanopubAsString("example_with_base");        
         String contentType = "application/x-trig";       
         
         request = new MockHttpServletRequest();
@@ -134,7 +133,7 @@ public class NanopubControllerIntegrationTest {
         
         assertEquals("[\"" + EXAMPLE_STORED_URI + "\"]", 
         		response.getContentAsString());
-    }
+    }    
     
     @DirtiesContext
     @Test

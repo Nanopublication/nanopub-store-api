@@ -19,7 +19,6 @@ import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,7 +33,6 @@ import org.openrdf.model.util.ModelUtil;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.Rio;
 import org.springframework.http.MediaType;
-import org.springframework.test.AssertThrows;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -140,7 +138,7 @@ public class NanopubControllerTest {
     @Test
 	public void testRetrieveNanopubURLMapping() throws Exception {
         Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
-        when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
+        when(nanopubDao.retrieveNanopub(Mockito.any(String.class))).thenReturn(np);
         
 		this.mockMvc.perform(get("/nanopubs/" + "some-integrity-key").
                         header("accept", "application/x-trig")).andExpect(status().isOk());
@@ -155,7 +153,7 @@ public class NanopubControllerTest {
     @Test
 	public void testRetrieveNanopub() throws Exception {
     	Nanopub np = NanopublicationFileOperation.getNanopubFixture(EXAMPLE_NANOPUB_NAME);
-    	when(nanopubDao.retrieveNanopub(Mockito.any(URI.class))).thenReturn(np);
+    	when(nanopubDao.retrieveNanopub(Mockito.any(String.class))).thenReturn(np);
 
     	String body = this.mockMvc.perform(get
         ("/nanopubs/" + "some-integrity-key").

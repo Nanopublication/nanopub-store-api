@@ -12,14 +12,19 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
+import static nl.lumc.nanopub.store.api.utils.NanopubStoreConstants.STORE_MAPPING_CONTEXT;
 
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.vocabulary.DC;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -42,7 +47,9 @@ public class NanopublicationFileOperation {
             = getLogger(NanopublicationFileOperation.class);
 	public static final String EXAMPLE_STORED_URI = 
 			"http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc";
-	public static final String EXAMPLE_NANOPUB_NAME = "example";
+        public static final String EXAMPLE_STORED_KEY = 
+			"RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc";
+	public static final String EXAMPLE_NANOPUB_NAME = "example_with_base";
 	public static final String EXAMPLE_STORED_NANOPUB_NAME 
 	= "example_stored";
 	public static final String EXAMPLE_NOBASE_NANOPUB_NAME 
@@ -115,7 +122,10 @@ public class NanopublicationFileOperation {
             Nanopub nanopub = getNanopubFixture(name);
 			
             List<Statement> statements = getStatements(nanopub);			
-            addStatements(repo, statements);			
+            addStatements(repo, statements);	
+            
+            addMappingStatements(repo, nanopub.getUri(), 
+                    nanopub.getUri().getLocalName());
 		
         } catch (MalformedNanopubException | OpenRDFException | 
                 IOException e) {
@@ -124,6 +134,33 @@ public class NanopublicationFileOperation {
             return false;		
         }
         return true;	
+    } 
+    
+    
+    public static void addMappingStatements(Repository repo,                 
+            URI nanopubUri, String key) {		
+        	
+        RepositoryConnection connection = null;        
+        Literal object = new LiteralImpl(key, XMLSchema.STRING);         
+        Statement statement = new StatementImpl(nanopubUri, 
+                DC.IDENTIFIER, object); 
+		
+        try {			
+            connection = repo.getConnection();			
+            connection.add(statement, STORE_MAPPING_CONTEXT);         
+		
+        } catch (RepositoryException e) {		
+            LOGGER.warn("NanopublicationFileOperation failed ",e);		
+        } finally {			
+            if (connection != null) {				
+                try {					
+                    connection.close();				
+                } catch (RepositoryException e) {					
+                    LOGGER.warn("NanopublicationFileOperation failed ",e);				
+                }			
+            }		
+        }	
     }
+    
     
 }

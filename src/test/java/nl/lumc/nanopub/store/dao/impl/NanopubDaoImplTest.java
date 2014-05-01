@@ -15,10 +15,13 @@ import java.util.List;
 
 import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_KEY;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_NANOPUB_NAME;
-
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
+import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addMappingStatements;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openrdf.model.Statement;
@@ -73,11 +76,16 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test
 	public void testStoreNanopub() throws Exception {
-		Nanopub nanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
-		List<Statement> expectedStatements = getStatements(nanopub);
+		Nanopub nanopub = getNanopubFixture(EXAMPLE_STORED_NANOPUB_NAME);
 		Repository repositoryExpected = new SailRepository(new MemoryStore());
 		repositoryExpected.initialize();
+                
+                List<Statement> expectedStatements = getStatements(nanopub);
 		addStatements(repositoryExpected, expectedStatements);
+		
+                URI storedNPUri = new URIImpl(EXAMPLE_STORED_URI);                
+                addMappingStatements(repositoryExpected, storedNPUri, 
+                        EXAMPLE_STORED_KEY);
 		
 		int expectedSize = this.dao.listNanopubs().size() + 1;
 		this.dao.storeNanopub(nanopub);
@@ -91,14 +99,17 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test(expected=NanopubDaoException.class)
 	public void testStoreExistingNanopub() throws Exception {
-		Nanopub nanopub = getNanopubFixture(EXAMPLE_NANOPUB_NAME);
+		Nanopub nanopub = getNanopubFixture(EXAMPLE_STORED_NANOPUB_NAME);
 		List<Statement> expectedStatements = getStatements(nanopub);
 		addStatements(this.repository, expectedStatements);
+                
+                URI storedNPUri = new URIImpl(EXAMPLE_STORED_URI);                
+                addMappingStatements(this.repository, storedNPUri, 
+                        EXAMPLE_STORED_KEY);
 		
 		this.dao.storeNanopub(nanopub);
 	}
-	
-
+        
 	@DirtiesContext
 	@Test
 	public void testRetrieveNanopub() throws Exception {
@@ -106,8 +117,12 @@ public class NanopubDaoImplTest {
 		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_STORED_NANOPUB_NAME);
 		List<Statement> expectedStatements = getStatements(expectedNanopub);
 		addStatements(this.repository, expectedStatements);
+                
+                URI storedNPUri = new URIImpl(EXAMPLE_STORED_URI);                
+                addMappingStatements(this.repository, storedNPUri, 
+                        EXAMPLE_STORED_KEY);
 
-		Nanopub actualNanopub = this.dao.retrieveNanopub(new URIImpl(EXAMPLE_STORED_URI));
+		Nanopub actualNanopub = this.dao.retrieveNanopub(EXAMPLE_STORED_KEY);
 		assertNotNull(actualNanopub);
 
 		List<Statement> actualStatements = getStatements(actualNanopub);
@@ -118,12 +133,10 @@ public class NanopubDaoImplTest {
 	@DirtiesContext
 	@Test
 	public void testHasNanopub() throws Exception {
-		Nanopub expectedNanopub = getNanopubFixture(EXAMPLE_STORED_NANOPUB_NAME);
+            
+		addNanopub(this.repository, EXAMPLE_STORED_NANOPUB_NAME);
 
-		List<Statement> expectedStatements = getStatements(expectedNanopub);
-		addStatements(this.repository, expectedStatements);
-
-		boolean result = this.dao.hasNanopub(new URIImpl(EXAMPLE_STORED_URI));
+		boolean result = this.dao.hasNanopub(EXAMPLE_STORED_KEY);
 
 		assertTrue(result);
 	}
