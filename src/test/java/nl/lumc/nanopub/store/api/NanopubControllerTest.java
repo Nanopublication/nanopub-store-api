@@ -19,6 +19,7 @@ import nl.lumc.nanopub.store.dao.NanopubDao;
 import nl.lumc.nanopub.store.utils.NanopublicationFileOperation;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -70,14 +71,15 @@ public class NanopubControllerTest {
         this.nanopub = NanopublicationFileOperation.getNanopubAsString(EXAMPLE_NANOPUB_NAME);     
     }
     
-
     @DirtiesContext
     @Test 
     public void testStoreNanopubURLMapping() throws Exception {
         String content = NanopublicationFileOperation.
                 getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
         
-        this.mockMvc.perform(post("/nanopubs/").content(content).contentType(new MediaType("application", "x-trig"))).
+        this.mockMvc.perform(post("/nanopubs/").param("copy", "false").content(content).
+                contentType(new MediaType("application", "x-trig"))
+                ).
                 andExpect(status().isCreated());
     }
 

@@ -1,49 +1,43 @@
-@prefix : <http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc> .
-@prefix dc: <http://purl.org/dc/terms/> .
-@prefix np: <http://www.nanopub.org/nschema#> .
-@prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix sio: <http://semanticscience.org/resource/> .
+@prefix this: <http://localhost:8080/nanopub-store-api/nanopubs/RAABU1r5wuV6S5nvk3PnVLL650Aap2YeA-3uzvjRbK87Y> .
+@prefix sub: <http://localhost:8080/nanopub-store-api/nanopubs/RAABU1r5wuV6S5nvk3PnVLL650Aap2YeA-3uzvjRbK87Y#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 
-@prefix data: <http://rdf.biosemantics.org/dataset/gene_disease_associations#> .
-@prefix textmining: <http://rdf.biosemantics.org/vocabularies/text_mining#> .
-
-@base <http://localhost:8080/nanopub-store-api/nanopubs/RAI9hDzzF6TSvwAOwwZkRB-hq_d9OzrURvwia0FtuIPHc> .
-
-
-<> {
-    <> a np:Nanopublication;
-        np:hasAssertion :assertion;
-        np:hasProvenance :provenance;
-        np:hasPublicationInfo :publicationInfo .
-
+this: {
+	this: a np:Nanopublication ;
+		np:hasProvenance sub:provenance ;
+		np:hasPublicationInfo sub:publicationInfo ;
+		np:hasAssertion sub:assertion .
 }
 
-:assertion {
-    data:association_000001 a sio:statistical-association ;
-        sio:has-measurement-value data:association_000001_p_value ;
-        sio:refers-to <http://bio2rdf.org/geneid:6448>,
-            <http://bio2rdf.org/omim:252900> .
-
-    data:association_000001_p_value a sio:probability-value;
-        sio:has-value "6.562E-5"^^xsd:float .
-
+sub:assertion {
+	<http://wwww.notourdomain.com/dataset/gene_disease_associations#association_000001> <http://semanticscience.org/resource/has-measurement-value> <http://wwww.notourdomain.com/dataset/gene_disease_associations#association_000001_p_value> .
+	
+	<http://wwww.notourdomain.com/dataset/gene_disease_associations#association_000001_p_value> <http://semanticscience.org/resource/has-value> "6.562E-5"^^xsd:float ;
+		a <http://semanticscience.org/resource/probability-value> .
+	
+	<http://wwww.notourdomain.com/dataset/gene_disease_associations#association_000001> <http://semanticscience.org/resource/refers-to> <http://bio2rdf.org/omim:252900> ;
+		a <http://semanticscience.org/resource/statistical-association> ;
+		<http://semanticscience.org/resource/refers-to> <http://bio2rdf.org/geneid:6448> .
 }
 
-:publicationInfo {
-    <> dc:created "2013-02-13T15:48:39Z"^^xsd:dateTime;
-        dc:rights <http://creativecommons.org/licenses/by/3.0/>;
-        dc:rightsHolder <http://biosemantics.org>;
-        pav:authoredBy <http://www.researcherid.com/rid/B-5927-2012>,
-            <http://www.researcherid.com/rid/B-6035-2012>;
-        pav:createdBy <http://www.researcherid.com/rid/B-5852-2012> .
-
+sub:provenance {
+	sub:assertion <http://www.w3.org/ns/prov#wasGeneratedBy> <http://wwww.notourdomain.com/vocabularies/text_mining#gene_disease_concept_profiles_matching_1980_2010> ;
+		<http://www.w3.org/ns/prov#wasDerivedFrom> <http://wwww.notourdomain.com/vocabularies/text_mining#gene_disease_concept_profiles_1980_2010> .
 }
 
-:provenance {
-    :assertion  prov:wasDerivedFrom  textmining:gene_disease_concept_profiles_1980_2010 ;
-                prov:wasGeneratedBy  textmining:gene_disease_concept_profiles_matching_1980_2010 .
-
+sub:publicationInfo {
+	this: pav:authoredBy <http://www.researcherid.com/rid/B-6035-2012> ;
+		dc:rights <http://creativecommons.org/licenses/by/3.0/> ;
+		pav:createdBy <http://www.researcherid.com/rid/B-5852-2012> ;
+		dc:rightsHolder <http://biosemantics.org> ;
+		dc:created "2013-02-13T15:48:39Z"^^xsd:dateTime ;
+		pav:authoredBy <http://www.researcherid.com/rid/B-5927-2012> ;
+		pav:publishedOn "2014-05-02T11:07:22.195+02:00"^^xsd:dateTime .
 }

@@ -1,5 +1,6 @@
 package nl.lumc.nanopub.store.api;
 
+import ch.tkuhn.hashuri.rdf.CheckNanopub;
 import ch.tkuhn.hashuri.rdf.TransformNanopub;
 import com.google.common.io.CharStreams;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -38,12 +39,11 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import java.io.InputStreamReader;
-import java.util.Properties;
 import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 import org.openrdf.model.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.io.Charsets;
-import org.openrdf.model.Statement;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -73,6 +73,7 @@ public class NanopubController {
      * Stores a nanopublication
      * </p>
      * @param contentType Currently only application/x-trig is supported
+     * @param copy
      * @param nanopub A nanopublication as String
      * @param request required to get request URL
      * @param response required to set HTTP response status
@@ -88,6 +89,8 @@ public class NanopubController {
             // Swagger always sends "application/json", so from the interface the string needs quotes, no quotes needed from another REST client
             @ApiParam(required = true, value = "The RDF content of the nanopublication to be published")
             @RequestBody(required = true) String nanopub,
+            @ApiParam(required = true, value = "Set false if the nanopublication is to be  published into the store, set true if the nanopublication is to be copied to the store")
+            @RequestParam(value = "copy",required = true) boolean copy,
             final HttpServletRequest request,
             final HttpServletResponse response) {     
         
@@ -95,11 +98,17 @@ public class NanopubController {
         String nanopubStr = null;
     	
         
-        if(contentType.contains("application/x-trig")) {			
+        if(contentType.contains("application/x-trig") && !copy) {			
             nanopubStr = storeStringNanopub (nanopub, RDFFormat.TRIG, request,response);        
         }
-        else if(contentType.contains("application/n-quads")) {			
+        else if(contentType.contains("application/n-quads") && !copy) {			
             nanopubStr = storeStringNanopub (nanopub, RDFFormat.NQUADS, request,response);        
+        }
+        else if(contentType.contains("application/x-trig") && copy) {			
+            nanopubStr = copyStringNanopub (nanopub, RDFFormat.TRIG, response);        
+        }
+        else if(contentType.contains("application/n-quads") && copy) {			
+            nanopubStr = copyStringNanopub (nanopub, RDFFormat.NQUADS, response);        
         }
         else{			
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
@@ -313,6 +322,56 @@ public class NanopubController {
         
         try {			
             NanopubUtils.writeToStream(npHashed, npOutStream, RDFFormat.TRIG);			
+            nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");            
+            response.setHeader("Content-Type", RDFFormat.TRIG.toString());
+        } catch (RDFHandlerException | UnsupportedEncodingException e) {
+            nanopubStr = "\n"+e.getMessage();
+			
+        }
+        return nanopubStr;
+    }
+    
+    
+    private String copyStringNanopub (final String nanopub, 
+            final RDFFormat format,
+            final HttpServletResponse response) {   
+        
+        Nanopub npSyntaxCheck = null;
+        
+        try {            
+            
+            npSyntaxCheck = new NanopubImpl(nanopub, format);
+            
+            if(CheckNanopub.isValid(npSyntaxCheck)) {
+                
+                String key = nanopubDao.storeNanopub(npSyntaxCheck); 
+                logger.debug("nanopublication is copied with key '{}'", key);
+                
+            }
+            else {
+                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                response.setHeader("Content-Type", "text/plain");
+                return("Could not copy nanopub. "
+                        + "nanopublication content is not matching with the key");
+                
+            }
+            
+        } catch (NanopubDaoException | MalformedNanopubException | 
+                OpenRDFException | IOException e) {           
+            logger.warn("Could not copy nanopub", e);
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setHeader("Content-Type", "text/plain");
+            return "Could not copy nanopub\n" + e.getMessage();
+        }
+        
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        response.setHeader("Location", npSyntaxCheck.getUri().toString());
+        
+        ByteArrayOutputStream npOutStream = new ByteArrayOutputStream();        
+        String nanopubStr = "";
+        
+        try {			
+            NanopubUtils.writeToStream(npSyntaxCheck, npOutStream, RDFFormat.TRIG);			
             nanopubStr = new String(npOutStream.toByteArray(), "UTF-8");            
             response.setHeader("Content-Type", RDFFormat.TRIG.toString());
         } catch (RDFHandlerException | UnsupportedEncodingException e) {

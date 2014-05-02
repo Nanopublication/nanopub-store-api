@@ -42,6 +42,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 
 import javax.servlet.http.HttpServletResponse;
+import org.junit.Ignore;
 
 /**
  *
@@ -80,7 +81,7 @@ public class NanopubControllerIntegrationTest {
         MockHttpServletRequest request;
         MockHttpServletResponse response; 
         
-        String nanopub = getNanopubAsString("example_with_base");        
+        String nanopub = getNanopubAsString("example_without_base");        
         String contentType = "application/x-trig";       
         
         request = new MockHttpServletRequest();
@@ -89,7 +90,8 @@ public class NanopubControllerIntegrationTest {
         
         request.setMethod("POST");
         request.setRequestURI("/nanopubs/");
-        request.setContent(nanopub.getBytes());        
+        request.setContent(nanopub.getBytes());
+        request.addParameter("copy", "false");
         Object handler;
         
         handler = handlerMapping.getHandler(request).getHandler();
@@ -98,7 +100,37 @@ public class NanopubControllerIntegrationTest {
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
         assertNotNull(response.getHeaderValue("Location"));
         assertNotNull(response.getHeaderValue("Content-Type"));    
-    }    
+    } 
+    
+    
+     @DirtiesContext
+    @Test    
+    public void testCopyNanopub() throws MalformedNanopubException, 
+    OpenRDFException, IOException, NanopubDaoException, Exception {
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response; 
+        
+        String nanopub = getNanopubAsString("example_foreign");        
+        String contentType = "application/x-trig";       
+        
+        request = new MockHttpServletRequest();
+        request.setContentType(contentType);
+        response = new MockHttpServletResponse();
+        
+        request.setMethod("POST");
+        request.setRequestURI("/nanopubs/");
+        request.setContent(nanopub.getBytes());
+        request.addParameter("copy", "true");
+        Object handler;
+        
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);      
+        
+        assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+        assertNotNull(response.getHeaderValue("Location"));
+        assertNotNull(response.getHeaderValue("Content-Type"));    
+    } 
     
     
     @DirtiesContext
