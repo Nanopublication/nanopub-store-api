@@ -23,6 +23,7 @@ import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
 import org.nanopub.NanopubUtils;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
@@ -43,6 +44,9 @@ import nl.lumc.nanopub.store.api.utils.NanopublicationChecks;
 import org.openrdf.model.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.io.Charsets;
+
+import org.springframework.web.bind.annotation.RequestParam;
+import org.openrdf.model.impl.URIImpl;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -256,7 +260,7 @@ public class NanopubController {
 }
     
     
-    private String storeStringNanopub (final String nanopub, 
+    private String storeStringNanopub (final String nanopubString, 
             final RDFFormat format,
             final HttpServletRequest request,
             final HttpServletResponse response) {    
@@ -264,25 +268,23 @@ public class NanopubController {
         Nanopub npHashed;
         
         try {
-
             String baseUri = request.getRequestURL().toString();
+            
             if (!baseUri.endsWith("/"))
             {
             	baseUri += "/";
             }
             
-            Nanopub npSyntaxCheck = new NanopubImpl(nanopub, format, baseUri);
+            Nanopub npInitial = new NanopubImpl(nanopubString, format, baseUri);
             
-            String uriReplacenanopub = NanopublicationChecks.
-                    replaceNanopubGraphUri(nanopub, 
-                            npSyntaxCheck.getUri().toString(), baseUri);
-
-            
-            Model rdfGraph = NanopublicationChecks.toRDFGraph(uriReplacenanopub, baseUri, format);
+            List<Statement> nanopubRdfGraph = NanopubUtils.getStatements(npInitial);
+            Model rdfGraph = NanopublicationChecks.replaceNanopubGraphUri(nanopubRdfGraph, 
+                            npInitial.getUri(), new URIImpl(baseUri));
             
             if(NanopublicationChecks.isNanopubPublished(rdfGraph)) {			
                 response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
                 response.setHeader("Content-Type", "text/plain");
+                
                 return("Could not store nanopub. "
                         + "This nanopublication is already published");
             }
