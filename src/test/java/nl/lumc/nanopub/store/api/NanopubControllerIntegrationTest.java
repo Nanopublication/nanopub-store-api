@@ -10,13 +10,15 @@ import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_S
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.EXAMPLE_STORED_URI;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.addNanopub;
 import static nl.lumc.nanopub.store.utils.NanopublicationFileOperation.getNanopubAsString;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.servlet.http.HttpServletResponse;
 
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
 
@@ -38,11 +40,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-
-
-import javax.servlet.http.HttpServletResponse;
-import org.junit.Ignore;
 
 /**
  *
