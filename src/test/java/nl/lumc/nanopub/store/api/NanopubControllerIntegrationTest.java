@@ -129,7 +129,7 @@ public class NanopubControllerIntegrationTest {
         assertNotNull(response.getHeaderValue("Content-Type"));    
     } 
     
-    @Ignore
+    
     @DirtiesContext
     @Test
     public void testStoreNanopubNQuads() throws MalformedNanopubException, 
@@ -139,7 +139,7 @@ public class NanopubControllerIntegrationTest {
         MockHttpServletResponse response; 
         
         String nanopub = getNanopubAsString("example","nq");        
-        String contentType = "application/n-quads";       
+        String contentType = "application/n-quads";
         
         request = new MockHttpServletRequest();
         request.setContentType(contentType);

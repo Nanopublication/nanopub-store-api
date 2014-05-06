@@ -69,7 +69,7 @@ public class NanopublicationFileOperation {
         try {
             npFile = new File(fileURL.toURI());
             for (String fileLine : readLines(npFile, StandardCharsets.UTF_8)) {
-                content += fileLine;
+                content += fileLine+"\n";
             }          
         } catch (IOException | URISyntaxException ex) {
             LOGGER.warn("NanopublicationFileOperation failed ",ex);
