@@ -68,14 +68,14 @@ public class NanopubControllerTest {
         MockitoAnnotations.initMocks(this);
         
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        this.nanopub = NanopublicationFileOperation.getNanopubAsString(EXAMPLE_NANOPUB_NAME);     
+        this.nanopub = NanopublicationFileOperation.getNanopubAsString(EXAMPLE_NANOPUB_NAME,"trig");     
     }
     
     @DirtiesContext
     @Test 
     public void testStoreNanopubURLMapping() throws Exception {
         String content = NanopublicationFileOperation.
-                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
+                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME,"trig");
         
         this.mockMvc.perform(post("/nanopubs/").param("copy", "false").content(content).
                 contentType(new MediaType("application", "x-trig"))
@@ -96,7 +96,7 @@ public class NanopubControllerTest {
     @Test 
     public void testStoreNanopubWithoutContentType() throws Exception {
         String content = NanopublicationFileOperation.
-                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
+                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME,"trig");
         
         this.mockMvc.perform(post("/nanopubs/").content(content)).
                 andExpect(status().isUnsupportedMediaType());
@@ -107,7 +107,7 @@ public class NanopubControllerTest {
     @Test 
     public void testStoreNanopubWithUnsupportedContentType() throws Exception {
         String content = NanopublicationFileOperation.
-                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME);
+                getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME,"trig");
         
         this.mockMvc.perform(post("/nanopubs/").content(content).contentType(MediaType.APPLICATION_XML)).
                 andExpect(status().isUnsupportedMediaType());

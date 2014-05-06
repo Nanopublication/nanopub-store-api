@@ -61,9 +61,9 @@ public class NanopublicationFileOperation {
      * @param fileLocation The name of the test nanopub fixture.
      * @return  File content as a string object. 
      */
-    public static String getNanopubAsString(String fileLocation)  {
+    public static String getNanopubAsString(String fileLocation, String extension)  {
         URL fileURL = NanopublicationFileOperation.
-                class.getResource("../" + fileLocation + ".trig");
+                class.getResource("../" + fileLocation + "."+extension);
         File npFile;
         String content = "";
         try {

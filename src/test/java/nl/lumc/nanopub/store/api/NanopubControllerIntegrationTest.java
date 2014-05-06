@@ -21,6 +21,7 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.lumc.nanopub.store.dao.NanopubDaoException;
+import org.junit.Ignore;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,14 +73,73 @@ public class NanopubControllerIntegrationTest {
     
     @DirtiesContext
     @Test    
-    public void testStoreNanopub() throws MalformedNanopubException, 
+    public void testStoreNanopubWithoutBaseUri() throws MalformedNanopubException, 
     OpenRDFException, IOException, NanopubDaoException, Exception {
         
         MockHttpServletRequest request;
         MockHttpServletResponse response; 
         
-        String nanopub = getNanopubAsString("example_without_base");        
+        String nanopub = getNanopubAsString("example_without_base","trig");        
         String contentType = "application/x-trig";       
+        
+        request = new MockHttpServletRequest();
+        request.setContentType(contentType);
+        response = new MockHttpServletResponse();
+        
+        request.setMethod("POST");
+        request.setRequestURI("/nanopubs/");
+        request.setContent(nanopub.getBytes());
+        request.addParameter("copy", "false");
+        Object handler;
+        
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);      
+        
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+        assertNotNull(response.getHeaderValue("Location"));
+        assertNotNull(response.getHeaderValue("Content-Type"));    
+    }
+    
+    @DirtiesContext
+    @Test
+    public void testStoreNanopubWithBaseUri() throws MalformedNanopubException, 
+    OpenRDFException, IOException, NanopubDaoException, Exception {
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response; 
+        
+        String nanopub = getNanopubAsString("example_with_base","trig");        
+        String contentType = "application/x-trig";       
+        
+        request = new MockHttpServletRequest();
+        request.setContentType(contentType);
+        response = new MockHttpServletResponse();
+        
+        request.setMethod("POST");
+        request.setRequestURI("/nanopubs/");
+        request.setContent(nanopub.getBytes());
+        request.addParameter("copy", "false");
+        Object handler;
+        
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);      
+        
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+        assertNotNull(response.getHeaderValue("Location"));
+        assertNotNull(response.getHeaderValue("Content-Type"));    
+    } 
+    
+    @Ignore
+    @DirtiesContext
+    @Test
+    public void testStoreNanopubNQuads() throws MalformedNanopubException, 
+    OpenRDFException, IOException, NanopubDaoException, Exception {
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response; 
+        
+        String nanopub = getNanopubAsString("example","nq");        
+        String contentType = "application/n-quads";       
         
         request = new MockHttpServletRequest();
         request.setContentType(contentType);
@@ -108,7 +168,7 @@ public class NanopubControllerIntegrationTest {
         MockHttpServletRequest request;
         MockHttpServletResponse response; 
         
-        String nanopub = getNanopubAsString("example_foreign");        
+        String nanopub = getNanopubAsString("example_foreign","trig");        
         String contentType = "application/x-trig";       
         
         request = new MockHttpServletRequest();
@@ -167,7 +227,7 @@ public class NanopubControllerIntegrationTest {
     @DirtiesContext
     @Test
 	public void testRetrieveNanopub() throws Exception {
-    	String expectedContent = getNanopubAsString("example_stored");
+    	String expectedContent = getNanopubAsString("example_stored","trig");
 
     	addNanopub(this.repository, EXAMPLE_STORED_NANOPUB_NAME);
     	
