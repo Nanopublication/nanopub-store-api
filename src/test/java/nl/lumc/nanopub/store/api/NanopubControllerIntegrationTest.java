@@ -189,6 +189,33 @@ public class NanopubControllerIntegrationTest {
         assertNotNull(response.getHeaderValue("Content-Type"));    
     } 
     
+    @DirtiesContext
+    @Test    
+    public void testCopyInvalidKeyNanopub() throws MalformedNanopubException, 
+    OpenRDFException, IOException, NanopubDaoException, Exception {
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response; 
+        
+        String nanopub = getNanopubAsString("example_foreign_invalid_key","trig");        
+        String contentType = "application/x-trig";       
+        
+        request = new MockHttpServletRequest();
+        request.setContentType(contentType);
+        response = new MockHttpServletResponse();
+        
+        request.setMethod("POST");
+        request.setRequestURI("/nanopubs/");
+        request.setContent(nanopub.getBytes());
+        request.addParameter("copy", "true");
+        Object handler;
+        
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);      
+        
+        assertEquals(HttpServletResponse.SC_NOT_ACCEPTABLE, response.getStatus());
+    } 
+    
     
     @DirtiesContext
     @Test
