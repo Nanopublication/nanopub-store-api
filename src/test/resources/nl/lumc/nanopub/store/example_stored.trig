@@ -9,7 +9,7 @@
 @prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 
-this: {
+sub:head {
 	this: np:hasAssertion sub:assertion ;
 		a np:Nanopublication ;
 		np:hasProvenance sub:provenance ;

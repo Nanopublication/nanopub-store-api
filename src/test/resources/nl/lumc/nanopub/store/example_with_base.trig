@@ -13,7 +13,7 @@
 @base <http://wwww.notmydomain.com/nanopubs/000001> .
 
 
-<> {
+:head {
     <> a np:Nanopublication;
         np:hasAssertion :assertion;
         np:hasProvenance :provenance;
