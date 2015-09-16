@@ -49,6 +49,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  * @since 25-10-2013
  * @version 0.3
  */
+//@Ignore
 public class NanopubControllerTest {
 
     @Mock
@@ -73,6 +74,7 @@ public class NanopubControllerTest {
     
     @DirtiesContext
     @Test 
+    @Ignore
     public void testStoreNanopubURLMapping() throws Exception {
         String content = NanopublicationFileOperation.
                 getNanopubAsString(EXAMPLE_NOBASE_NANOPUB_NAME,"trig");

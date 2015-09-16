@@ -56,6 +56,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration("classpath:test-api-context.xml")
+@Ignore
 public class NanopubControllerIntegrationTest {
     
     @Autowired
